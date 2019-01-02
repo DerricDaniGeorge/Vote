@@ -38,6 +38,7 @@ public class RegisterUserValidator implements Validator {
 		// ValidationUtils.rejectIfEmptyOrWhitespace(errors, "OTP", "required.OTP", "OTP
 		// must be entered");
 		RegisterUserForm registerForm = (RegisterUserForm) target;
+		System.out.println("Gender:--->"+registerForm.getGender());
 		
 		if (registerForm.getVotersID() != null) {
 			if (!registerForm.getVotersID().isEmpty()) {
@@ -123,7 +124,7 @@ public class RegisterUserValidator implements Validator {
 		LocalDate dateToSet = LocalDate.of(year, Month.DECEMBER, 31);
 		if (registerForm.getDateOfBirth() != null) {
 			LocalDate doB = registerForm.getDateOfBirth();
-			System.out.println("doB-->" + doB);
+//			System.out.println("doB-->" + doB);
 			// LocalDate
 			// dateOfBirth=doB.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 			if (doB.isAfter(dateToSet)) {

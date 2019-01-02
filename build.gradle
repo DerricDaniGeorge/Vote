@@ -26,16 +26,21 @@ dependencies {
     // Use JUnit test framework
     testImplementation 'junit:junit:4.12'
     
-    compile 'org.springframework:spring-core:5.1.1.RELEASE'
-    compile 'org.springframework:spring-beans:5.1.1.RELEASE'
-    compile 'org.springframework:spring-context:5.1.1.RELEASE'
-    compile 'org.springframework:spring-context-support:5.1.1.RELEASE'
-    compile 'org.springframework:spring-expression:5.1.1.RELEASE'
-    compile 'org.springframework:spring-web:5.1.1.RELEASE'
-    compile 'org.springframework:spring-webmvc:5.1.1.RELEASE'
+    compile 'org.springframework:spring-core:5.1.2.RELEASE'
+    compile 'org.springframework:spring-beans:5.1.2.RELEASE'
+    compile 'org.springframework:spring-context:5.1.2.RELEASE'
+    compile 'org.springframework:spring-context-support:5.1.2.RELEASE'
+    compile 'org.springframework:spring-expression:5.1.2.RELEASE'
+    compile 'org.springframework:spring-web:5.1.2.RELEASE'
+    compile 'org.springframework:spring-webmvc:5.1.2.RELEASE'
+    compile 'org.springframework:spring-jdbc:5.1.2.RELEASE'
     compile 'javax.servlet:javax.servlet-api:4.0.1'
     compile 'javax.servlet.jsp.jstl:jstl:1.2'
     compile 'javax.servlet.jsp:jsp-api:2.2'
+    compile 'javax.mail:javax.mail-api:1.6.2'
+    compile 'com.sun.mail:javax.mail:1.6.2'
+    compile 'org.apache.commons:commons-dbcp2:2.0'
+    compile 'mysql:mysql-connector-java:8.0.13'
     
 }
 

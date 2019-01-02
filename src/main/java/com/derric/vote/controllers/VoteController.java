@@ -12,7 +12,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 
+import com.derric.vote.beans.User;
+import com.derric.vote.beans.UserDetail;
 import com.derric.vote.forms.RegisterUserForm;
+import com.derric.vote.services.UserServices;
+import com.derric.vote.utils.MailSender;
 import com.derric.vote.utils.OTPGenerator;
 import com.derric.vote.validators.RegisterUserValidator;
 
@@ -25,9 +29,17 @@ public class VoteController {
 	private RegisterUserValidator registerUserValidator;
 	@Autowired
 	private OTPGenerator otpGenerator;
+	@Autowired
+	private MailSender mailSender;
+	@Autowired
+	private UserServices userServices;
 	
+	@RequestMapping(value="/")
+	public String showWelcomePage() {
+		return "redirect:/registerUser";
+	} 
 	
-	@RequestMapping(value="/registerUser", method=RequestMethod.GET)
+	@RequestMapping(value= {"/registerUser"}, method=RequestMethod.GET)
 	public String showRegistrationPage(Model model) {
 		RegisterUserForm registerUserForm=new RegisterUserForm();
 		model.addAttribute("registerUserForm",registerUserForm);
@@ -40,7 +52,14 @@ public class VoteController {
 		if(result.hasErrors()) {
 			return "RegistrationForm";
 		}else {
+			User user=new User();
+			user.setVotersId(registerUserForm.getVotersID().trim());
+			if(!userServices.isUserAlreadyExist(user)) {
+				userServices.addUser(user,registerUserForm);
+				mailSender.sendOTP(registerUserForm.getEmail().trim(), otpGenerator.generateOTP());
+			}
 			//status.setComplete();
+		
 		return "redirect:OTPForm";
 		}
 	}
@@ -49,12 +68,12 @@ public class VoteController {
 		return "AccountCreatedSuccess";
 	}
 	@RequestMapping(value="/OTPForm")
-	public String showOTPForm() {
+	public String showOTPForm(/*@ModelAttribute("registerUserForm") RegisterUserForm registerUserFrom */) {
 		return "OTPForm";
 	}
 	@RequestMapping(value="/generateOTP")
 	public String generateOTP() {
-			otpGenerator.generateOTP(6);
+			otpGenerator.generateOTP();
 		return "redirect:AccountCreatedSuccess";
 		}
 	@InitBinder
