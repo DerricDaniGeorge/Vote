@@ -7,16 +7,18 @@
 <title>OTP</title>
 
 </head>
-<body>
+<body onload="enableButtonAfterTimeout()">
 
 <form id="registration_Form" method="POST" action="">
 
 OTP :<input type="text"/><br>
-	<input id="otpButton" type="button" value="Get Verification code" onclick="enableButtonAfterTimeout()"/>
+	<input id="otpButton" type="button" value="Get Verification code" onclick="callOTPGenerator()"/>
+	<p id="msgLimitReached"></p>
 	 <input type="submit"  value="Verify"/><br>
 	  
 </form>
 <script>
+var resendOTPCounter=0;
 function countDown() {
 	var counter = [];
 	for (var j = 10; j >= 0; j--) {
@@ -33,8 +35,16 @@ function countDown() {
 function enableButtonAfterTimeout() {
 	document.getElementById("otpButton").disabled=true;
 	countDown();
-	setTimeout(function(){document.getElementById("otpButton").disabled=false;},12*1000);
+	setTimeout(function(){document.getElementById("otpButton").disabled=false;},11*1000);
 
+}
+function callOTPGenerator(){
+	resendOTPCounter=resendOTPCounter+1;
+	if(resendOTPCounter <3){
+	window.location.href="/Vote/generateOTP";
+	}else{
+		document.getElementById("msgLimitReached").innerHTML="Maximum attempt reached";
+	}
 }
 </script>
 </body>

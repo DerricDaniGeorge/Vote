@@ -74,7 +74,7 @@ public class VoteController {
 	@RequestMapping(value="/generateOTP")
 	public String generateOTP() {
 			otpGenerator.generateOTP();
-		return "redirect:AccountCreatedSuccess";
+		return "redirect:/OTPForm";
 		}
 	@InitBinder
 	public void initBinder(WebDataBinder binder) {
