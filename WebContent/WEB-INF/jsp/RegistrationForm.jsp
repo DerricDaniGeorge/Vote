@@ -26,5 +26,6 @@
 	Re-type Password:<form:input type="password" path="retypePassword"/><form:errors path="retypePassword" cssClass="errorText"/><br>
 	<input id="submit_button" type="submit" value="Register"/>
 </form:form>
+<p id="msgUserExists">${msgUserExists}</p>
 </body>
 </html>

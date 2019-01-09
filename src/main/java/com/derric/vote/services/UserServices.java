@@ -11,7 +11,9 @@ public class UserServices {
 	private UserDAO userDao;
 	
 	public boolean isUserAlreadyExist(User user) {
-		return user.getVotersId().equalsIgnoreCase(userDao.getVotersId(user)) ? true:false;
+		boolean isVotersIdExists= user.getVotersId().equalsIgnoreCase(userDao.getVotersId(user)) ? true:false;
+		boolean isEmailExists=(user.getDetail(UserDetail.EMAIL).toString()).equalsIgnoreCase(userDao.getEmailAddress(user))?true:false;
+		return isVotersIdExists || isEmailExists;
 	}
 	public void addUser(User user,RegisterUserForm registerUserForm) {
 		user.setPassword(registerUserForm.getPassword());

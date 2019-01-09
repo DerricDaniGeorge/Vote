@@ -28,6 +28,7 @@ import com.derric.vote.formatter.StringToLocalDateFormatter;
 import com.derric.vote.services.UserServices;
 import com.derric.vote.utils.JavaSendMailSMTPServer;
 import com.derric.vote.utils.MailSender;
+import com.derric.vote.utils.OTPExpirer;
 import com.derric.vote.utils.OTPGenerator;
 import com.derric.vote.utils.StringUtils;
 import com.derric.vote.validators.RegisterUserValidator;
@@ -81,6 +82,11 @@ public class WebConfiguration implements WebMvcConfigurer{
 	@Lazy(true)
 	public OTPGenerator otpGenerator() {
 		return new OTPGenerator(6);
+	}
+	@Bean
+	@Lazy(true)
+	public OTPExpirer otpExpirer() {
+		return new OTPExpirer(30*1000);
 	}
 	@Bean
 	public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {

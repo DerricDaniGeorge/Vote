@@ -9,11 +9,11 @@
 </head>
 <body onload="enableButtonAfterTimeout()">
 
-<form id="registration_Form" method="POST" action="">
+<form id="otpForm" method="POST" action="/Vote/OTPForm">
 
-OTP :<input type="text"/><br>
+OTP :<input name="otp" type="text"/><br>
 	<input id="otpButton" type="button" value="Get Verification code" onclick="callOTPGenerator()"/>
-	<p id="msgLimitReached"></p>
+	<p id="msgLimitReached">${invalidOTP}</p>
 	 <input type="submit"  value="Verify"/><br>
 	  
 </form>
