@@ -24,6 +24,7 @@ import com.derric.vote.utils.OTPExpirer;
 import com.derric.vote.utils.OTPGenerator;
 import com.derric.vote.validators.RegisterUserValidator;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/")
@@ -66,7 +67,10 @@ public class VoteController {
 			if (!userServices.isUserAlreadyExist(user)) {
 				model.addAttribute("user", user);
 				String otp = otpGenerator.generateOTP();
-				model.addAttribute("otp", otp);
+				HttpSession session=request.getSession();		
+				session.setAttribute("otp", otp);
+				otpExpirer.expireOTP(otp, request, session);
+				
 				// mailSender.sendOTP(registerUserForm.getEmail().trim(),otp);
 				return "OTPForm";
 			} else {
@@ -84,32 +88,38 @@ public class VoteController {
 		return "AccountCreatedSuccess";
 	}
 
-	/*
-	 * @RequestMapping(value="/OTPForm", method=RequestMethod.GET) public String
-	 * showOTPForm(@ModelAttribute("registerUserForm") RegisterUserForm
-	 * registerUserForm ) { return "OTPForm"; }
-	 */
+	
+	  @RequestMapping(value="/OTPForm", method=RequestMethod.GET) 
+	  public String showOTPForm() { 
+		  return "OTPForm"; 
+	  }
+	 
 	@RequestMapping(value = "/OTPForm", method = RequestMethod.POST)
 	public String verifyOTP(HttpServletRequest request,
 			@ModelAttribute("registerUserForm") RegisterUserForm registerUserForm, 
-			@ModelAttribute("user") User user,@ModelAttribute("otp") String otpInSession) {
+			@ModelAttribute("user") User user,Model model) {
 		String otp = request.getParameter("otp");
-		if (otp.equals(otpInSession)) {
+		HttpSession session=request.getSession();
+		String otpInSession=(String)session.getAttribute("otp");
+		System.out.println("otp:"+otp+"-->otpinsession:"+otpInSession);
+		if (otpInSession!=null && otp.equals(otpInSession)) {
 			System.out.println("otp:"+otp+"-->otpinsession:"+otpInSession);
 			userServices.addUser(user, registerUserForm);
 			return "AccountCreatedSuccess";
-		} else {
-			request.setAttribute("invalidOTP", "Invalid OTP");
-			return "OTPForm";
 		}
+		model.addAttribute("invalidOTP","Invalid OTP");
+		return "OTPForm";
 	}
 
 	@RequestMapping(value = "/generateOTP")
-	public String generateOTP(WebRequest request,Model model,SessionAttributeStore store) {
+	public String generateOTP(HttpServletRequest request,Model model) {
 		String otp=otpGenerator.generateOTP();
-		model.addAttribute("otp",otp);
-		otpExpirer.expireOTP(otp, request, store);
-		return "redirect:/OTPForm";
+		HttpSession session=request.getSession();
+		session.setAttribute("otp", otp);
+		System.out.println(session.getAttribute("otp"));
+	//	model.addAttribute("otp",otp);
+		otpExpirer.expireOTP(otp, request,session);
+		return "OTPForm";
 	}
 
 	@InitBinder("registerUserForm") // if values in bracket here is not specified,spring will use this validator for

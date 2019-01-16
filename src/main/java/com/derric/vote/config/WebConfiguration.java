@@ -86,7 +86,7 @@ public class WebConfiguration implements WebMvcConfigurer{
 	@Bean
 	@Lazy(true)
 	public OTPExpirer otpExpirer() {
-		return new OTPExpirer(30*1000);
+		return new OTPExpirer(20*1000);
 	}
 	@Bean
 	public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
