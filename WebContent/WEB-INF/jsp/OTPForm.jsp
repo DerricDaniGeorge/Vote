@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ page import="javax.servlet.http.HttpSession" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -18,7 +19,11 @@ OTP :<input name="otp" type="text"/><br>
 	  
 </form>
 <script>
-var resendOTPCounter=0;
+<%
+HttpSession sn=request.getSession();
+int otpCount=(int)sn.getAttribute("otpCount");
+%>
+resendOTPCounter=<%=otpCount%>;
 function countDown() {
 	var counter = [];
 	for (var j = 10; j >= 0; j--) {
@@ -39,11 +44,11 @@ function enableButtonAfterTimeout() {
 
 }
 function callOTPGenerator(){
-	resendOTPCounter=resendOTPCounter+1;
-	if(resendOTPCounter <3){
-	window.location.href="/Vote/generateOTP";
+	if(resendOTPCounter < 3){
+	window.location.replace="/Vote/generateOTP";
 	}else{
 		document.getElementById("msgLimitReached").innerHTML="Maximum attempt reached";
+		window.location.replace="/Vote/registerUser";
 	}
 }
 </script>

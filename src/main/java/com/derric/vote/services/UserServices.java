@@ -25,4 +25,7 @@ public class UserServices {
 		user.setDetail(UserDetail.DATE_OF_BIRTH, registerUserForm.getDateOfBirth());
 		userDao.insert(user);
 	}
+	public void doLogin(User user) {
+		
+	}
 }

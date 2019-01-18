@@ -81,4 +81,19 @@ public class JdbcUserDaoImpl implements UserDAO {
 		return null;
 	}
 
+	public String getUserPassword(User user) {
+		try {
+			String sql = "SELECT password FROM app_user WHERE voters_id=?";
+			return jdbcTemplate.query(sql, new Object[] { user.getVotersId() }, new ResultSetExtractor<String>() {
+				public String extractData(ResultSet rs) throws SQLException {
+					return rs.next() ? rs.getString("password") : null;
+				}
+			});
+		} catch (DataAccessException dae) {
+			System.out.println("Couldn't fetch user's password from database.");
+			dae.printStackTrace();
+		}
+		return null;
+	}
+
 }

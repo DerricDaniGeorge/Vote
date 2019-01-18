@@ -8,4 +8,5 @@ public interface UserDAO {
 	public User findUserByVotersId(String votersId);
 	public String getVotersId(User user);
 	public String getEmailAddress(User user);
+	public String getUserPassword(User user);
 }
