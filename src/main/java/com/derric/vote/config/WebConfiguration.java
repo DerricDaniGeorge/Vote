@@ -1,13 +1,4 @@
 package com.derric.vote.config;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.annotation.PropertySources;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import org.springframework.context.support.ResourceBundleMessageSource;
-import org.springframework.format.FormatterRegistry;
-import org.springframework.jdbc.core.JdbcTemplate;
-
 import java.util.Properties;
 
 import javax.sql.DataSource;
@@ -16,14 +7,22 @@ import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.PropertySources;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.format.FormatterRegistry;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 //import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 //import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter; //Depricated
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
-import com.derric.vote.dao.JdbcUserDaoImpl;
-import com.derric.vote.dao.UserDAO;
+import com.derric.vote.dao.IUserDBService;
+import com.derric.vote.dao.UserDBService;
 import com.derric.vote.formatter.StringToLocalDateFormatter;
 import com.derric.vote.services.UserServices;
 import com.derric.vote.utils.JavaSendMailSMTPServer;
@@ -116,8 +115,8 @@ public class WebConfiguration implements WebMvcConfigurer{
 	}
 	
 	@Bean
-	public UserDAO userDAO() {
-		return new JdbcUserDaoImpl(jdbcTemplate());
+	public IUserDBService userDAO() {
+		return new UserDBService(jdbcTemplate());
 	}
 	@Bean
 	public JdbcTemplate jdbcTemplate() {

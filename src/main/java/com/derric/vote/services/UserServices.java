@@ -1,14 +1,15 @@
 package com.derric.vote.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
 import com.derric.vote.beans.User;
 import com.derric.vote.beans.UserDetail;
-import com.derric.vote.dao.UserDAO;
+import com.derric.vote.dao.IUserDBService;
 import com.derric.vote.forms.RegisterUserForm;
 
 public class UserServices {
 	@Autowired
-	private UserDAO userDao;
+	private IUserDBService userDao;
 	
 	public boolean isUserAlreadyExist(User user) {
 		boolean isVotersIdExists= user.getVotersId().equalsIgnoreCase(userDao.getVotersId(user)) ? true:false;

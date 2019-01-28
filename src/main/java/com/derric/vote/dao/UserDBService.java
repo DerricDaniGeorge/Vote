@@ -10,11 +10,11 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 
-public class JdbcUserDaoImpl implements UserDAO {
+public class UserDBService implements IUserDBService {
 
 	private JdbcTemplate jdbcTemplate;
 
-	public JdbcUserDaoImpl(JdbcTemplate jdbcTemplate) {
+	public UserDBService(JdbcTemplate jdbcTemplate) {
 		this.jdbcTemplate = jdbcTemplate;
 	}
 
@@ -59,7 +59,7 @@ public class JdbcUserDaoImpl implements UserDAO {
 				}
 			});
 		} catch (DataAccessException dae) {
-			System.out.println("OOps");
+			System.out.println("OOps");	
 			dae.printStackTrace();
 		}
 		return null;
