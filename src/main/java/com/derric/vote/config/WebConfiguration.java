@@ -22,10 +22,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 //import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter; //Depricated
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
-import com.derric.vote.dao.IUserDBService;
-import com.derric.vote.dao.UserDBService;
 import com.derric.vote.formatter.StringToLocalDateFormatter;
-import com.derric.vote.services.UserServices;
 import com.derric.vote.utils.JavaSendMailSMTPServer;
 import com.derric.vote.utils.MailSender;
 import com.derric.vote.utils.OTPExpirer;
@@ -132,17 +129,8 @@ public class WebConfiguration implements WebMvcConfigurer {
 	}
 
 	@Bean
-	public IUserDBService userDAO() {
-		return new UserDBService(jdbcTemplate());
-	}
-
-	@Bean
 	public JdbcTemplate jdbcTemplate() {
 		return new JdbcTemplate(dataSource());
 	}
 
-	@Bean
-	public UserServices userServices() {
-		return new UserServices();
-	}
 }
