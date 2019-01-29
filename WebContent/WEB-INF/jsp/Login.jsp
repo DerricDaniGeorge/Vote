@@ -11,6 +11,7 @@
 Voter's ID:<input type="text" name="votersId"/>
 Password:<input type="password" name="password"/>
 <input type="submit" value="LOGIN"/>
+<p>${invalidCredentials}</p>
 </body>
 </form>
 </html>

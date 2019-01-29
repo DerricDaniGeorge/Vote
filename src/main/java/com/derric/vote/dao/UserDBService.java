@@ -1,18 +1,22 @@
 package com.derric.vote.dao;
 
-import com.derric.vote.beans.User;
-import com.derric.vote.beans.UserDetail;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 
+import com.derric.vote.beans.User;
+import com.derric.vote.beans.UserDetail;
+import com.derric.vote.constants.ISqlConstants;
+
 public class UserDBService implements IUserDBService {
 
 	private JdbcTemplate jdbcTemplate;
+	private static final Logger logger = LogManager.getLogger(UserDBService.class);
 
 	public UserDBService(JdbcTemplate jdbcTemplate) {
 		this.jdbcTemplate = jdbcTemplate;
@@ -22,8 +26,7 @@ public class UserDBService implements IUserDBService {
 	public int insert(final User user) {
 		int insertedCount = 0;
 		try {
-			String sql = "INSERT INTO app_user(voters_id,first_name,middle_name,last_name,gender,date_of_birth,email,password) VALUES(?,?,?,?,?,?,?,?)";
-			insertedCount = jdbcTemplate.update(sql,
+			insertedCount = jdbcTemplate.update(ISqlConstants.ADD_USER,
 					new Object[] { user.getVotersId(), user.getDetail(UserDetail.FIRST_NAME),
 							user.getDetail(UserDetail.MIDDLE_NAME), user.getDetail(UserDetail.LAST_NAME),
 							user.getDetail(UserDetail.GENDER), user.getDetail(UserDetail.DATE_OF_BIRTH),
@@ -31,8 +34,8 @@ public class UserDBService implements IUserDBService {
 			System.out.println(insertedCount + "row(s) inserted");
 
 		} catch (DataAccessException dae) {
-			System.out.println("Couldn't communicate with database");
-			dae.printStackTrace();
+			logger.error("Couldn't communicate with database");
+			logger.error(dae);
 		}
 		return insertedCount;
 
@@ -52,24 +55,26 @@ public class UserDBService implements IUserDBService {
 	@Override
 	public String getVotersId(User user) {
 		try {
-			String sql = "SELECT voters_id FROM app_user WHERE voters_id=?";
-			return jdbcTemplate.query(sql, new Object[] { user.getVotersId() }, new ResultSetExtractor<String>() {
-				public String extractData(ResultSet rs) throws SQLException {
-					return rs.next() ? rs.getString("voters_id") : null;
-				}
-			});
+			return jdbcTemplate.query(ISqlConstants.GET_VOTERSID_BY_VOTERSID, new Object[] { user.getVotersId() },
+					new ResultSetExtractor<String>() {
+						@Override
+						public String extractData(ResultSet rs) throws SQLException {
+							return rs.next() ? rs.getString("voters_id") : null;
+						}
+					});
 		} catch (DataAccessException dae) {
-			System.out.println("OOps");	
+			System.out.println("OOps");
 			dae.printStackTrace();
 		}
 		return null;
 	}
 
+	@Override
 	public String getEmailAddress(User user) {
 		try {
-			String sql = "SELECT email FROM app_user WHERE email=?";
-			return jdbcTemplate.query(sql, new Object[] { user.getDetail(UserDetail.EMAIL) },
-					new ResultSetExtractor<String>() {
+			return jdbcTemplate.query(ISqlConstants.GET_EMAILID_BY_EMAILID,
+					new Object[] { user.getDetail(UserDetail.EMAIL) }, new ResultSetExtractor<String>() {
+						@Override
 						public String extractData(ResultSet rs) throws SQLException {
 							return rs.next() ? rs.getString("email") : null;
 						}
@@ -81,17 +86,19 @@ public class UserDBService implements IUserDBService {
 		return null;
 	}
 
+	@Override
 	public String getUserPassword(User user) {
 		try {
-			String sql = "SELECT password FROM app_user WHERE voters_id=?";
-			return jdbcTemplate.query(sql, new Object[] { user.getVotersId() }, new ResultSetExtractor<String>() {
-				public String extractData(ResultSet rs) throws SQLException {
-					return rs.next() ? rs.getString("password") : null;
-				}
-			});
+			return jdbcTemplate.query(ISqlConstants.GET_PASSWORD_BY_VOTERSID, new Object[] { user.getVotersId() },
+					new ResultSetExtractor<String>() {
+						@Override
+						public String extractData(ResultSet rs) throws SQLException {
+							return rs.next() ? rs.getString("password") : null;
+						}
+					});
 		} catch (DataAccessException dae) {
-			System.out.println("Couldn't fetch user's password from database.");
-			dae.printStackTrace();
+			logger.error("Couldn't fetch user's password from database.");
+			logger.error(dae);
 		}
 		return null;
 	}

@@ -9,14 +9,16 @@ import com.derric.vote.forms.RegisterUserForm;
 
 public class UserServices {
 	@Autowired
-	private IUserDBService userDao;
-	
+	private IUserDBService userDBService;
+
 	public boolean isUserAlreadyExist(User user) {
-		boolean isVotersIdExists= user.getVotersId().equalsIgnoreCase(userDao.getVotersId(user)) ? true:false;
-		boolean isEmailExists=(user.getDetail(UserDetail.EMAIL).toString()).equalsIgnoreCase(userDao.getEmailAddress(user))?true:false;
+		boolean isVotersIdExists = user.getVotersId().equalsIgnoreCase(userDBService.getVotersId(user)) ? true : false;
+		boolean isEmailExists = (user.getDetail(UserDetail.EMAIL).toString())
+				.equalsIgnoreCase(userDBService.getEmailAddress(user)) ? true : false;
 		return isVotersIdExists || isEmailExists;
 	}
-	public void addUser(User user,RegisterUserForm registerUserForm) {
+
+	public void addUser(User user, RegisterUserForm registerUserForm) {
 		user.setPassword(registerUserForm.getPassword());
 		user.setDetail(UserDetail.FIRST_NAME, registerUserForm.getFirstName().trim());
 		user.setDetail(UserDetail.MIDDLE_NAME, registerUserForm.getMiddleName().trim());
@@ -24,9 +26,15 @@ public class UserServices {
 		user.setDetail(UserDetail.GENDER, registerUserForm.getGender().trim());
 		user.setDetail(UserDetail.EMAIL, registerUserForm.getEmail().trim());
 		user.setDetail(UserDetail.DATE_OF_BIRTH, registerUserForm.getDateOfBirth());
-		userDao.insert(user);
+		userDBService.insert(user);
 	}
-	public void doLogin(User user) {
-		
+
+	public boolean doLogin(User user) {
+		boolean isValidUser = false;
+		String password = userDBService.getUserPassword(user);
+		if (password != null) {
+			isValidUser = password.equals(user.getPassword()) ? true : false;
+		}
+		return isValidUser;
 	}
 }

@@ -1,4 +1,5 @@
 package com.derric.vote.config;
+
 import java.util.Properties;
 
 import javax.sql.DataSource;
@@ -36,94 +37,106 @@ import com.derric.vote.validators.RegisterUserValidator;
 
 @Configuration
 @EnableWebMvc
-@PropertySources({@PropertySource("classpath:application.properties"),@PropertySource("classpath:db.properties")})
+@PropertySources({ @PropertySource("classpath:application.properties"), @PropertySource("classpath:db.properties") })
 
-public class WebConfiguration implements WebMvcConfigurer{
-	
-	private @Value("${email.server.host}")String host;
-	private @Value("${email.smtp.port}")int port;
+public class WebConfiguration implements WebMvcConfigurer {
+
+	private @Value("${email.server.host}") String host;
+	private @Value("${email.smtp.port}") int port;
+	private @Value("${db.url}") String dbUrl;
+	private @Value("${db.username}") String dbUserName;
+	private @Value("${db.password}") String dbPassword;
 
 	@Bean
 	public InternalResourceViewResolver jspViewResolver() {
-		InternalResourceViewResolver viewResolver=new InternalResourceViewResolver();
+		InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
 		viewResolver.setPrefix("/WEB-INF/jsp/");
 		viewResolver.setSuffix(".jsp");
 		return viewResolver;
 	}
-/*	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(registerFormFilter());
-	}
-	@Bean
-	public RegisterFormFilter registerFormFilter() {
-		return new RegisterFormFilter();
-	}  */
-	
+	/*
+	 * public void addInterceptors(InterceptorRegistry registry) {
+	 * registry.addInterceptor(registerFormFilter()); }
+	 * 
+	 * @Bean public RegisterFormFilter registerFormFilter() { return new
+	 * RegisterFormFilter(); }
+	 */
+
 	@Bean
 	public RegisterUserValidator registerUserValidator() {
 		return new RegisterUserValidator();
 	}
+
 	@Bean
 	public MessageSource messageSource() {
-		ResourceBundleMessageSource messageSource=new ResourceBundleMessageSource();
+		ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
 		messageSource.setBasename("errorTexts");
 		return messageSource;
 	}
+
+	@Override
 	public void addFormatters(FormatterRegistry registry) {
 		registry.addFormatter(new StringToLocalDateFormatter("yyyy-MM-dd"));
 	}
-	
+
 	@Bean
 	@Lazy(true)
 	public StringUtils stringUtils() {
 		return new StringUtils();
 	}
+
 	@Bean
 	@Lazy(true)
 	public OTPGenerator otpGenerator() {
 		return new OTPGenerator(6);
 	}
+
 	@Bean
 	@Lazy(true)
 	public OTPExpirer otpExpirer() {
-		return new OTPExpirer(20*1000);
+		return new OTPExpirer(20 * 1000);
 	}
+
 	@Bean
 	public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
 		return new PropertySourcesPlaceholderConfigurer();
 	}
+
 	@Bean
 	@Lazy(true)
 	public MailSender mailSender() {
-		Properties mailServerProperties=new Properties();
-		mailServerProperties.put("mail.smtp.host",host);
-		mailServerProperties.put("mail.smtp.auth",true);
-		mailServerProperties.put("mail.smtp.starttls.enable",true);
+		Properties mailServerProperties = new Properties();
+		mailServerProperties.put("mail.smtp.host", host);
+		mailServerProperties.put("mail.smtp.auth", true);
+		mailServerProperties.put("mail.smtp.starttls.enable", true);
 		mailServerProperties.put("mail.smtp.port", port);
 		return new JavaSendMailSMTPServer(mailServerProperties);
 	}
-	
+
 	@Bean
 	public DataSource dataSource() {
-		BasicDataSource basicDataSource=new BasicDataSource();
+		BasicDataSource basicDataSource = new BasicDataSource();
 		basicDataSource.setDriverClassName(com.mysql.cj.jdbc.Driver.class.getName());
-		basicDataSource.setUrl("jdbc:mysql://localhost:3306/vote");
-		basicDataSource.setUsername("root");
-		basicDataSource.setPassword("admin");
+		basicDataSource.setUrl(dbUrl);
+		basicDataSource.setUsername(dbUserName);
+		basicDataSource.setPassword(dbPassword);
 		basicDataSource.setInitialSize(2);
 		basicDataSource.setMaxTotal(5);
 		return basicDataSource;
 	}
-	
+
 	@Bean
 	public IUserDBService userDAO() {
 		return new UserDBService(jdbcTemplate());
 	}
+
 	@Bean
 	public JdbcTemplate jdbcTemplate() {
 		return new JdbcTemplate(dataSource());
 	}
+
 	@Bean
 	public UserServices userServices() {
 		return new UserServices();
-	} 
+	}
 }
