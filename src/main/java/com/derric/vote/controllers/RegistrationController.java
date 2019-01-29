@@ -26,9 +26,8 @@ import com.derric.vote.utils.OTPGenerator;
 import com.derric.vote.validators.RegisterUserValidator;
 
 @Controller
-@RequestMapping("/")
 @SessionAttributes(value = { "registerUserForm", "user", "otp" })
-public class VoteController {
+public class RegistrationController {
 
 	@Autowired
 	private RegisterUserValidator registerUserValidator;
@@ -40,11 +39,6 @@ public class VoteController {
 	private UserServices userServices;
 	@Autowired
 	private OTPExpirer otpExpirer;
-
-	@RequestMapping(value = "/")
-	public String showWelcomePage() {
-		return "redirect:/registerUser";
-	}
 
 	@RequestMapping(value = { "/registerUser" }, method = RequestMethod.GET)
 	public String showRegistrationPage(Model model) {
@@ -123,23 +117,6 @@ public class VoteController {
 		// model.addAttribute("otp",otp);
 		otpExpirer.expireOTP(otp, request, session);
 		return "OTPForm";
-	}
-
-	@RequestMapping(value = "/login", method = RequestMethod.GET)
-	public String showLoginPage() {
-		return "Login";
-	}
-
-	@RequestMapping(value = "/login", method = RequestMethod.POST)
-	public String login(HttpServletRequest request, Model model) {
-		User user = new User();
-		user.setVotersId(request.getParameter("votersId"));
-		user.setPassword(request.getParameter("password"));
-		if (userServices.doLogin(user)) {
-			return "CastVote";
-		}
-		model.addAttribute("invalidCredentials", "Invalid username or password");
-		return "Login";
 	}
 
 	@InitBinder("registerUserForm") // if values in bracket here is not specified,spring will use this validator for
