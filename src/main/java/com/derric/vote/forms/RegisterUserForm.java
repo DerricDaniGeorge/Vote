@@ -60,16 +60,6 @@ public class RegisterUserForm extends LoginForm {
 		this.email = email;
 	}
 
-	@Override
-	public String getPassword() {
-		return password;
-	}
-
-	@Override
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
 	public String getRetypePassword() {
 		return retypePassword;
 	}
