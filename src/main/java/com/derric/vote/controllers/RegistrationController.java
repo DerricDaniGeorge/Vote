@@ -44,14 +44,14 @@ public class RegistrationController {
 	public String showRegistrationPage(Model model) {
 		RegisterUserForm registerUserForm = new RegisterUserForm();
 		model.addAttribute("registerUserForm", registerUserForm);
-		return "RegistrationForm";
+		return "registrationForm";
 	}
 
 	@RequestMapping(value = "/registerUser", method = RequestMethod.POST)
 	public String submitForm(SessionStatus status, HttpServletRequest request, Model model,
 			@ModelAttribute("registerUserForm") @Validated RegisterUserForm registerUserForm, BindingResult result) {
 		if (result.hasErrors()) {
-			return "RegistrationForm";
+			return "registrationForm";
 		} else {
 			User user = new User();
 			user.setVotersId(registerUserForm.getVotersID().trim());
@@ -63,28 +63,27 @@ public class RegistrationController {
 				session.setAttribute("otp", otp);
 				otpExpirer.expireOTP(otp, request, session);
 				session.setAttribute("otpCount", 1);
-				// mailSender.sendOTP(registerUserForm.getEmail().trim(),otp);
-				return "OTPForm";
+				// mailSender.sendOTP(registerUserForm.getEmail().trim(),otp); //Uncomment this
+				// line later
+				return "otpForm";
 			} else {
 				model.addAttribute("msgUserExists", "User with Voter's ID: " + registerUserForm.getVotersID()
 						+ " or email id: " + registerUserForm.getEmail() + " already exists.");
-				return "RegistrationForm";
+				return "registrationForm";
 			}
-			// status.setComplete();
-
 		}
 	}
 
 	@RequestMapping(value = "/AccountCreatedSuccess")
 	public String showSuccessMsg() {
-		return "AccountCreatedSuccess";
+		return "accountCreatedSuccess";
 	}
 
 	@RequestMapping(value = "/OTPForm", method = RequestMethod.GET)
 	public String showOTPForm(HttpServletRequest request) {
 		HttpSession session = request.getSession();
-		session.setAttribute("otpCount", 1);
-		return "OTPForm";
+		session.setAttribute("otpCount", 1); // This line is for testing purpose. Comment this line later
+		return "otpForm";
 	}
 
 	@RequestMapping(value = "/OTPForm", method = RequestMethod.POST)
@@ -103,7 +102,7 @@ public class RegistrationController {
 			return "redirect:AccountCreatedSuccess";
 		}
 		model.addAttribute("invalidOTP", "Invalid OTP");
-		return "OTPForm";
+		return "otpForm";
 	}
 
 	@RequestMapping(value = "/generateOTP")
@@ -114,9 +113,8 @@ public class RegistrationController {
 		int otpCount = (int) session.getAttribute("otpCount");
 		otpCount++;
 		session.setAttribute("otpCount", otpCount);
-		// model.addAttribute("otp",otp);
 		otpExpirer.expireOTP(otp, request, session);
-		return "OTPForm";
+		return "otpForm";
 	}
 
 	@InitBinder("registerUserForm") // if values in bracket here is not specified,spring will use this validator for

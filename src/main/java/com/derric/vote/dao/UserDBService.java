@@ -3,8 +3,6 @@ package com.derric.vote.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
@@ -16,7 +14,6 @@ import com.derric.vote.constants.ISqlConstants;
 public class UserDBService implements IUserDBService {
 
 	private JdbcTemplate jdbcTemplate;
-	private static final Logger logger = LogManager.getLogger(UserDBService.class);
 
 	public UserDBService(JdbcTemplate jdbcTemplate) {
 		this.jdbcTemplate = jdbcTemplate;
@@ -34,8 +31,9 @@ public class UserDBService implements IUserDBService {
 			System.out.println(insertedCount + "row(s) inserted");
 
 		} catch (DataAccessException dae) {
-			logger.error("Couldn't communicate with database");
-			logger.error(dae);
+			throw dae;
+		} catch (Exception e) {
+			throw e;
 		}
 		return insertedCount;
 
@@ -63,10 +61,10 @@ public class UserDBService implements IUserDBService {
 						}
 					});
 		} catch (DataAccessException dae) {
-			System.out.println("OOps");
-			dae.printStackTrace();
+			throw dae;
+		} catch (Exception e) {
+			throw e;
 		}
-		return null;
 	}
 
 	@Override
@@ -80,10 +78,10 @@ public class UserDBService implements IUserDBService {
 						}
 					});
 		} catch (DataAccessException dae) {
-			System.out.println("Oops");
-			dae.printStackTrace();
+			throw dae;
+		} catch (Exception e) {
+			throw e;
 		}
-		return null;
 	}
 
 	@Override
@@ -97,10 +95,10 @@ public class UserDBService implements IUserDBService {
 						}
 					});
 		} catch (DataAccessException dae) {
-			logger.error("Couldn't fetch user's password from database.");
-			logger.error(dae);
+			throw dae;
+		} catch (Exception e) {
+			throw e;
 		}
-		return null;
 	}
 
 }

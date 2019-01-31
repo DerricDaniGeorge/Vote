@@ -35,23 +35,23 @@ public class LoginController {
 	public String showLoginPage(Model model) {
 		LoginForm loginForm = new LoginForm();
 		model.addAttribute("loginForm", loginForm);
-		return "Login";
+		return "login";
 	}
 
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	public String login(HttpServletRequest request, Model model,
 			@ModelAttribute("loginForm") @Validated LoginForm loginForm, BindingResult result) {
 		if (result.hasErrors()) {
-			return "Login";
+			return "login";
 		}
 		User user = new User();
 		user.setVotersId(request.getParameter("votersId"));
 		user.setPassword(request.getParameter("password"));
 		if (userServices.doLogin(user)) {
-			return "CastVote";
+			return "castVote";
 		}
 		model.addAttribute("invalidCredentials", "Invalid username or password");
-		return "Login";
+		return "login";
 	}
 
 	@InitBinder("loginForm")
