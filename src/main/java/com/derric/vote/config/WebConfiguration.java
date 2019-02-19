@@ -1,10 +1,8 @@
 package com.derric.vote.config;
 
 import java.util.Properties;
+import java.util.Timer;
 
-import javax.sql.DataSource;
-
-import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -15,13 +13,14 @@ import org.springframework.context.annotation.PropertySources;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.format.FormatterRegistry;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 //import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 //import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter; //Depricated
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
+import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.Session;
 import com.derric.vote.formatter.StringToLocalDateFormatter;
 import com.derric.vote.utils.JavaSendMailSMTPServer;
 import com.derric.vote.utils.MailSender;
@@ -41,9 +40,10 @@ public class WebConfiguration implements WebMvcConfigurer {
 
 	private @Value("${email.server.host}") String host;
 	private @Value("${email.smtp.port}") int port;
-	private @Value("${db.url}") String dbUrl;
-	private @Value("${db.username}") String dbUserName;
-	private @Value("${db.password}") String dbPassword;
+//	private @Value("${db.url}") String dbUrl;
+//	private @Value("${db.username}") String dbUserName;
+//	private @Value("${db.password}") String dbPassword;
+	private @Value("${db.name}") String dbName;
 
 	@Bean
 	public InternalResourceViewResolver jspViewResolver() {
@@ -97,7 +97,7 @@ public class WebConfiguration implements WebMvcConfigurer {
 	@Bean
 	@Lazy(true)
 	public OTPExpirer otpExpirer() {
-		return new OTPExpirer(20 * 1000);
+		return new OTPExpirer(30 * 1000);
 	}
 
 	@Bean
@@ -116,21 +116,37 @@ public class WebConfiguration implements WebMvcConfigurer {
 		return new JavaSendMailSMTPServer(mailServerProperties);
 	}
 
-	@Bean
-	public DataSource dataSource() {
-		BasicDataSource basicDataSource = new BasicDataSource();
-		basicDataSource.setDriverClassName(com.mysql.cj.jdbc.Driver.class.getName());
-		basicDataSource.setUrl(dbUrl);
-		basicDataSource.setUsername(dbUserName);
-		basicDataSource.setPassword(dbPassword);
-		basicDataSource.setInitialSize(2);
-		basicDataSource.setMaxTotal(5);
-		return basicDataSource;
-	}
+	/*
+	 * @Bean public DataSource dataSource() { BasicDataSource basicDataSource = new
+	 * BasicDataSource();
+	 * basicDataSource.setDriverClassName(org.apache.cassandra.cql.jdbc.
+	 * CassandraDriver.class.getName()); basicDataSource.setUrl(dbUrl); //
+	 * basicDataSource.setUsername(dbUserName); //
+	 * basicDataSource.setPassword(dbPassword); basicDataSource.setInitialSize(2);
+	 * basicDataSource.setMaxTotal(5); return basicDataSource; }
+	 */
 
+	/*
+	 * @Bean public JdbcTemplate jdbcTemplate() { return new
+	 * JdbcTemplate(dataSource()); }
+	 */
 	@Bean
-	public JdbcTemplate jdbcTemplate() {
-		return new JdbcTemplate(dataSource());
+	@Lazy(true)
+	public Session session() {
+		Cluster cluster=cluster();
+		Session session=cluster.connect(dbName);
+		return session;
 	}
-
+	@Bean
+	@Lazy(true)
+	public Cluster cluster() {
+		Cluster cluster=Cluster.builder().addContactPoint("127.0.0.1").build();
+		return cluster;
+	}
+	
+	@Bean
+	public Timer timer() {
+		return new Timer();
+	}
+	
 }

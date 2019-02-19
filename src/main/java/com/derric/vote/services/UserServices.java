@@ -12,9 +12,10 @@ public class UserServices {
 	private IUserDBService userDBService;
 
 	public boolean isUserAlreadyExist(User user) {
-		boolean isVotersIdExists = user.getVotersId().equalsIgnoreCase(userDBService.getVotersId(user)) ? true : false;
-		boolean isEmailExists = (user.getDetail(UserDetail.EMAIL).toString())
-				.equalsIgnoreCase(userDBService.getEmailAddress(user)) ? true : false;
+		String votersId=userDBService.getVotersId(user);
+		boolean isVotersIdExists =(votersId==null)?false:(user.getVotersId()).equalsIgnoreCase(votersId)?true:false;
+		String email=userDBService.getEmailAddress(user);
+		boolean isEmailExists=(email==null)?false:(user.getDetail(UserDetail.EMAIL).toString()).equalsIgnoreCase(email)?true:false;
 		return isVotersIdExists || isEmailExists;
 	}
 
@@ -26,7 +27,7 @@ public class UserServices {
 		user.setDetail(UserDetail.GENDER, registerUserForm.getGender().trim());
 		user.setDetail(UserDetail.EMAIL, registerUserForm.getEmail().trim());
 		user.setDetail(UserDetail.DATE_OF_BIRTH, registerUserForm.getDateOfBirth());
-		userDBService.insert(user);
+		userDBService.insertUser(user);
 	}
 
 	public boolean doLogin(User user) {

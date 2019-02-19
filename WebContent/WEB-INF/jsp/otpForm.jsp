@@ -45,10 +45,11 @@ function enableButtonAfterTimeout() {
 }
 function callOTPGenerator(){
 	if(resendOTPCounter < 3){
-	window.location.replace="/Vote/generateOTP";
+		console.log("Inside callOTPGenerator");
+	window.location.href="/Vote/generateOTP";
 	}else{
 		document.getElementById("msgLimitReached").innerHTML="Maximum attempt reached";
-		window.location.replace="/Vote/registerUser";
+		setTimeout(function(){window.location.href="/Vote/registerUser";},5*1000);
 	}
 }
 </script>
