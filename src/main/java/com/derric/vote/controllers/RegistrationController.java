@@ -30,7 +30,7 @@ import com.derric.vote.utils.OTPGenerator;
 import com.derric.vote.validators.RegisterUserValidator;
 
 @Controller
-@SessionAttributes(value = { "registerUserForm", "user"})
+@SessionAttributes(value = { "registerUserForm", "user"}) //Because we added these models to session , we can access these objects in any page until session is invaliated.
 public class RegistrationController {
 	
 	@Autowired
@@ -102,6 +102,7 @@ public class RegistrationController {
 		if (otpInSession != null && otp.equals(otpInSession)) {
 			System.out.println("otp:" + otp + "-->otpinsession:" + otpInSession);
 			userServices.addUser(user, registerUserForm);
+			
 			otpExpirer.cancelTimer();
 			status.setComplete();
 			session.invalidate();

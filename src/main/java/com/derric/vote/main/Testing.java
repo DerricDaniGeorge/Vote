@@ -1,5 +1,9 @@
 package com.derric.vote.main;
 
+import java.util.HashSet;
+import java.util.Set;
+import java.util.TreeSet;
+
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
@@ -8,14 +12,20 @@ import com.datastax.driver.core.Session;
 public class Testing {
 
 	public static void main(String[] args) {
-		Cluster cluster=Cluster.builder().addContactPoint("127.0.0.1").build();
-		Session session=cluster.connect("vote");
-		ResultSet rs=session.execute("SELECT * from app_user");
-		for(Row row:rs) {
-			System.out.println(row.getString("email")+"|"+row.getString("voters_id"));
+		String seq="AACAAAAACAAAACCAAAAACAAAAACAAAA";
+		int length=3;
+		int startIndex=0;
+		Set<String> set=new TreeSet<>();
+		String piece="";
+		for(int i=0;i<seq.length();i++) {
+			for(int j=startIndex;j<startIndex+length;j++) {
+				piece+=seq.charAt(j)+"";
+			}
+			if(seq.contains(piece)) {
+				set.add(piece);
+			}
 		}
-		session.close();
-		cluster.close();
+		System.out.println(set);
 	}
 
 }

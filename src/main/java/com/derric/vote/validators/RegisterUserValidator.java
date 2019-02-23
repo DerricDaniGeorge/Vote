@@ -4,17 +4,18 @@ import java.time.LocalDate;
 import java.time.Month;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
-import org.springframework.beans.factory.annotation.Value;
+
 import com.derric.vote.forms.RegisterUserForm;
-import com.derric.vote.utils.StringUtils;
 
 public class RegisterUserValidator implements Validator {
 
+
 	@Autowired
-	private StringUtils stringUtils;
+	private CoreValidator coreValidator;
 
 	private @Value("${votersID.dbcolumn.size:10}") int VOTERSID_DB_SIZE;
 	private @Value("${firstName.dbcolumn.size:50}") int FIRSTNAME_DB_SIZE;
@@ -33,88 +34,20 @@ public class RegisterUserValidator implements Validator {
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastName", "required.lastName", "Last Name required");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email", "required.email", "Email required");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "required.password", "Password required");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "retypePassword", "required.retypePassword",
-				"Retype password textbox cannot be empty");
-		// ValidationUtils.rejectIfEmptyOrWhitespace(errors, "OTP", "required.OTP", "OTP
-		// must be entered");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "retypePassword", "required.retypePassword","Retype password textbox cannot be empty");
 		RegisterUserForm registerForm = (RegisterUserForm) target;
-		System.out.println("Gender:--->"+registerForm.getGender());
-		
-		if (registerForm.getVotersID() != null) {
-			if (!registerForm.getVotersID().isEmpty()) {
-				if (registerForm.getVotersID().length() != VOTERSID_DB_SIZE) {
-					System.out.println(VOTERSID_DB_SIZE);
-					errors.rejectValue("votersID", "votersID.no10characters",
-							"Invalid Voter's ID. Must have 10 characters");
-				}
-			}
-		}
-		if (registerForm.getFirstName() != null) {
-			if (!registerForm.getFirstName().isEmpty()) {
-				if (registerForm.getFirstName().length() > FIRSTNAME_DB_SIZE) {
-					errors.rejectValue("firstName", "invalid.firstName",
-							"Maximum " + FIRSTNAME_DB_SIZE + " characters permitted");
-				}
-				if (!stringUtils.containsOnlyAlphabets(registerForm.getFirstName())) {
-					errors.rejectValue("firstName", "fistName.specialCharacters", "First name must contains alphabets only");
-				}
-			}
-		}
-		
-		if (registerForm.getMiddleName() != null) {
-			if (!registerForm.getMiddleName().isEmpty()) {
-				if (!stringUtils.containsOnlyAlphabets(registerForm.getMiddleName())) {
-					errors.rejectValue("middleName", "middleName.specialCharacters",
-							"Middle name must contains alphabets only");
-				}
-				if (registerForm.getMiddleName().length() > MIDDLENAME_DB_SIZE) {
-					System.out.println(MIDDLENAME_DB_SIZE);
-					errors.rejectValue("middleName", "invalid.middleName",
-							"Maximum " + MIDDLENAME_DB_SIZE + " characters permitted");
-				}
-			}
-		}
-		if(registerForm.getLastName()!=null) {
-			if(!registerForm.getLastName().isEmpty()) {
-				if (!stringUtils.containsOnlyAlphabets(registerForm.getLastName())) {
-					errors.rejectValue("lastName", "lastName.specialCharacters", "Last name must contains alphabets only");
-				}
-				if (registerForm.getLastName().length() > LASTNAME_DB_SIZE) {
-					System.out.println(LASTNAME_DB_SIZE);
-					errors.rejectValue("lastName", "invalid.lastName",
-							"Maximum " + LASTNAME_DB_SIZE + " characters permitted");
-				}
-			}
-		}
-		if(registerForm.getEmail()!=null) {
-			if(!registerForm.getLastName().isEmpty()) {
-				
-				if (registerForm.getLastName().length() > EMAIL_DB_SIZE) {
-					System.out.println(EMAIL_DB_SIZE);
-					errors.rejectValue("email", "invalid.email",
-							"Maximum " + EMAIL_DB_SIZE + " characters permitted");
-				}
-			}
-		}
-		
-		if (registerForm.getPassword() != null) {
-			if (!registerForm.getPassword().isEmpty()) {
-				if (registerForm.getPassword().length() < 8) {
-					errors.rejectValue("password", "invalid.password", "Minimum 8 characters required");
-				}
-				if (registerForm.getPassword().length() > PASSWORD_DB_SIZE) {
-					System.out.println(PASSWORD_DB_SIZE);
-					errors.rejectValue("password", "invalid.password",
-							"Maximum " + PASSWORD_DB_SIZE + " characters permitted");
-				}
-			}
-		}
-		if (registerForm.getPassword() != null) {
-			if (!registerForm.getPassword().equals(registerForm.getRetypePassword())) {
-				errors.rejectValue("retypePassword", "invalid.retypePassword",
-						"Password & Re-type Password must match");
-			}
-		}
+		coreValidator.rejectNotStringExactCharacters(errors, registerForm.getVotersID(), VOTERSID_DB_SIZE, "votersID", "votersID.noexactcharacters", "Invalid Voter's ID. Must have "+VOTERSID_DB_SIZE+" characters");
+		coreValidator.rejectNotStringMaxCharacters(errors, registerForm.getFirstName(), FIRSTNAME_DB_SIZE, "firstName", "invalid.firstName", "Maximum " + FIRSTNAME_DB_SIZE + " characters permitted");
+		coreValidator.rejectNotStringContainsOnlyAlphabets(errors, registerForm.getFirstName(),"firstName", "fistName.specialCharacters", "First name must contains alphabets only");
+		coreValidator.rejectNotStringContainsOnlyAlphabets(errors, registerForm.getMiddleName(),"middleName", "middleName.specialCharacters", "Middle name must contains alphabets only");
+		coreValidator.rejectNotStringMaxCharacters(errors, registerForm.getMiddleName(), MIDDLENAME_DB_SIZE, "middleName", "invalid.middleName", "Maximum " + MIDDLENAME_DB_SIZE + " characters permitted");
+		coreValidator.rejectNotStringContainsOnlyAlphabets(errors, registerForm.getLastName(),"lastName", "lastName.specialCharacters", "Last name must contains alphabets only");
+		coreValidator.rejectNotStringMaxCharacters(errors, registerForm.getLastName(), LASTNAME_DB_SIZE, "lastName", "invalid.lastName", "Maximum " + LASTNAME_DB_SIZE + " characters permitted");
+		coreValidator.rejectNotStringMinCharacters(errors, registerForm.getPassword(), 8, "password", "invalid.password", "Minimum 8 characters required");
+		coreValidator.rejectNotStringMaxCharacters(errors, registerForm.getPassword(), PASSWORD_DB_SIZE, "password", "invalid.password", "Maximum " + PASSWORD_DB_SIZE + " characters permitted");
+		coreValidator.rejectNotStringMaxCharacters(errors, registerForm.getEmail(), EMAIL_DB_SIZE, "email", "invalid.email", "Maximum " + EMAIL_DB_SIZE + " characters permitted");
+		coreValidator.rejectNotTwoStringsAreExactlyEqual(errors, registerForm.getPassword(), registerForm.getRetypePassword(), "retypePassword", "invalid.retypePassword", "Password & Re-type Password must match");
+
 		if (registerForm.getDateOfBirth() == null) {
 			errors.rejectValue("dateOfBirth", "invalid.date", "Please input date of birth");
 		}
@@ -125,16 +58,11 @@ public class RegisterUserValidator implements Validator {
 		if (registerForm.getDateOfBirth() != null) {
 			LocalDate doB = registerForm.getDateOfBirth();
 //			System.out.println("doB-->" + doB);
-			// LocalDate
-			// dateOfBirth=doB.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+			// LocalDate dateOfBirth=doB.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 			if (doB.isAfter(dateToSet)) {
 				errors.rejectValue("dateOfBirth", "invalid.date", "Date cannot be greater than " + dateToSet);
 			}
 		}
-		/*
-		 * if (!stringUtils.containsOnlyNumbers(registerForm.getOTP())) {
-		 * errors.rejectValue("OTP", "otp.otherCharacters",
-		 * "OTP must contains digits only"); }
-		 */
+		
 	}
 }

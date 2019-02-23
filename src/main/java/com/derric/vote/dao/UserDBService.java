@@ -9,7 +9,7 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 
 import com.derric.vote.beans.User;
 import com.derric.vote.beans.UserDetail;
-import com.derric.vote.constants.ISqlConstants;
+import com.derric.vote.constants.ICqlConstants;
 
 public class UserDBService /* implements IUserDBService */ {
 
@@ -22,7 +22,7 @@ public class UserDBService /* implements IUserDBService */ {
 	public int insert_user_by_email(User user) {
 		int user_by_email_insertedCount = 0;
 		try {
-			user_by_email_insertedCount = jdbcTemplate.update(ISqlConstants.ADD_USER_USER_BY_EMAIL,
+			user_by_email_insertedCount = jdbcTemplate.update(ICqlConstants.ADD_USER_USER_BY_EMAIL,
 					new Object[] { user.getVotersId(), user.getDetail(UserDetail.FIRST_NAME),
 							user.getDetail(UserDetail.MIDDLE_NAME), user.getDetail(UserDetail.LAST_NAME),
 							user.getDetail(UserDetail.GENDER), user.getDetail(UserDetail.DATE_OF_BIRTH),
@@ -41,7 +41,7 @@ public class UserDBService /* implements IUserDBService */ {
 		int app_user_insertedCount = 0;
 		int user_by_email_insertedCount = 0;
 		try {
-			app_user_insertedCount = jdbcTemplate.update(ISqlConstants.ADD_USER_APP_USER,
+			app_user_insertedCount = jdbcTemplate.update(ICqlConstants.ADD_USER_APP_USER,
 					new Object[] { user.getVotersId(), user.getDetail(UserDetail.FIRST_NAME),
 							user.getDetail(UserDetail.MIDDLE_NAME), user.getDetail(UserDetail.LAST_NAME),
 							user.getDetail(UserDetail.GENDER), user.getDetail(UserDetail.DATE_OF_BIRTH),
@@ -68,7 +68,7 @@ public class UserDBService /* implements IUserDBService */ {
 
 	public String getVotersId(User user) {
 		try {
-			return jdbcTemplate.query(ISqlConstants.GET_VOTERSID_BY_VOTERSID, new Object[] { user.getVotersId() },
+			return jdbcTemplate.query(ICqlConstants.GET_VOTERSID_BY_VOTERSID, new Object[] { user.getVotersId() },
 					new ResultSetExtractor<String>() {
 						@Override
 						public String extractData(ResultSet rs) throws SQLException {
@@ -84,7 +84,7 @@ public class UserDBService /* implements IUserDBService */ {
 
 	public String getEmailAddress(User user) {
 		try {
-			return jdbcTemplate.query(ISqlConstants.GET_EMAILID_BY_EMAILID,
+			return jdbcTemplate.query(ICqlConstants.GET_EMAILID_BY_EMAILID,
 					new Object[] { user.getDetail(UserDetail.EMAIL) }, new ResultSetExtractor<String>() {
 						@Override
 						public String extractData(ResultSet rs) throws SQLException {
@@ -100,7 +100,7 @@ public class UserDBService /* implements IUserDBService */ {
 
 	public String getUserPassword(User user) {
 		try {
-			return jdbcTemplate.query(ISqlConstants.GET_PASSWORD_BY_VOTERSID, new Object[] { user.getVotersId() },
+			return jdbcTemplate.query(ICqlConstants.GET_PASSWORD_BY_VOTERSID, new Object[] { user.getVotersId() },
 					new ResultSetExtractor<String>() {
 						@Override
 						public String extractData(ResultSet rs) throws SQLException {
