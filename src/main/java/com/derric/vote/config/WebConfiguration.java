@@ -27,6 +27,7 @@ import com.derric.vote.utils.MailSender;
 import com.derric.vote.utils.OTPExpirer;
 import com.derric.vote.utils.OTPGenerator;
 import com.derric.vote.utils.StringUtils;
+import com.derric.vote.validators.AdminElectionValidator;
 import com.derric.vote.validators.CoreValidator;
 import com.derric.vote.validators.LoginFormValidator;
 import com.derric.vote.validators.RegisterUserValidator;
@@ -69,6 +70,10 @@ public class WebConfiguration implements WebMvcConfigurer {
 	@Bean
 	public LoginFormValidator loginFormValidator() {
 		return new LoginFormValidator();
+	}
+	@Bean
+	public AdminElectionValidator adminElectionValidator() {
+		return new AdminElectionValidator();
 	}
 	@Bean
 	public CoreValidator coreValidator() {

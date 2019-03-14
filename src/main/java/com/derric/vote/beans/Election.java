@@ -1,9 +1,15 @@
 package com.derric.vote.beans;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Election {
+public class Election implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4624483534691075568L;
 	String electionName;
 	Map<String,Object> electionDetails;
 	

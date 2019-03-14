@@ -14,4 +14,5 @@ public interface IUserDBService {
 	public String getEmailAddress(User user);
 
 	public String getUserPassword(User user);
+	public String getUserRole(User user);
 }

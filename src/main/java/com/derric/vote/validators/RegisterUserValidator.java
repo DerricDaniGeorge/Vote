@@ -36,6 +36,7 @@ public class RegisterUserValidator implements Validator {
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "required.password", "Password required");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "retypePassword", "required.retypePassword","Retype password textbox cannot be empty");
 		RegisterUserForm registerForm = (RegisterUserForm) target;
+		coreValidator.rejectNotStringContainsOnlyAlphabetsAndNumbers(errors, registerForm.getVotersID(), "votersID", "votersID.othercharacters", "VotersID must contains only letters and digits");
 		coreValidator.rejectNotStringExactCharacters(errors, registerForm.getVotersID(), VOTERSID_DB_SIZE, "votersID", "votersID.noexactcharacters", "Invalid Voter's ID. Must have "+VOTERSID_DB_SIZE+" characters");
 		coreValidator.rejectNotStringMaxCharacters(errors, registerForm.getFirstName(), FIRSTNAME_DB_SIZE, "firstName", "invalid.firstName", "Maximum " + FIRSTNAME_DB_SIZE + " characters permitted");
 		coreValidator.rejectNotStringContainsOnlyAlphabets(errors, registerForm.getFirstName(),"firstName", "fistName.specialCharacters", "First name must contains alphabets only");

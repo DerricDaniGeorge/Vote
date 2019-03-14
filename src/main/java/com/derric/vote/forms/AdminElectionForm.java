@@ -1,16 +1,29 @@
 package com.derric.vote.forms;
 
-import com.derric.vote.beans.Election;
+import java.time.LocalDate;
 
 public class AdminElectionForm {
 
-	private Election election;
+private String electionName;
+public String getElectionName() {
+	return electionName;
+}
+public void setElectionName(String electionName) {
+	this.electionName = electionName;
+}
+public LocalDate getStartDate() {
+	return startDate;
+}
+public void setStartDate(LocalDate startDate) {
+	this.startDate = startDate;
+}
+public LocalDate getEndDate() {
+	return endDate;
+}
+public void setEndDate(LocalDate endDate) {
+	this.endDate = endDate;
+}
+private LocalDate startDate;
+private LocalDate endDate;
 
-	public Election getElection() {
-		return election;
-	}
-
-	public void setElection(Election election) {
-		this.election = election;
-	}
 }

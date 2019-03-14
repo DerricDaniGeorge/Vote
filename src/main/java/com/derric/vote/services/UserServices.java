@@ -11,7 +11,7 @@ public class UserServices {
 	@Autowired
 	private IUserDBService userDBService;
 
-	public boolean isUserAlreadyExist(User user) {
+	public boolean isAccountAlreadyExist(User user) {
 		String votersId=userDBService.getVotersId(user);
 		boolean isVotersIdExists =(votersId==null)?false:(user.getVotersId()).equalsIgnoreCase(votersId)?true:false;
 		String email=userDBService.getEmailAddress(user);
@@ -30,12 +30,16 @@ public class UserServices {
 		userDBService.insertUser(user);
 	}
 
-	public boolean doLogin(User user) {
+	public String doLogin(User user) {
 		boolean isValidUser = false;
+		String role=null;
 		String password = userDBService.getUserPassword(user);
 		if (password != null) {
 			isValidUser = password.equals(user.getPassword()) ? true : false;
 		}
-		return isValidUser;
+		if(isValidUser) {
+			role=userDBService.getUserRole(user);
+		}
+		return role;
 	}
 }

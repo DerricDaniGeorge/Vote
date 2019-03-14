@@ -1,22 +1,60 @@
-/**
- * 
- */
-function countDown() {
-	var counter = [];
-	for (var j = 10; j >= 0; j--) {
-		counter[10 - j] = j;
-	}
-	counter[11] = "Resend OTP";
-	for (var i = 0; i <= 11; i++) {
-		let k = i;
-		setTimeout(function() {
-			document.getElementById("otpButton").value = counter[k];
-		}, 1000 * k);
+function disableById(id){
+	document.getElementById(id).setAttribute("disabled","disabled");
+}
+function enableById(id){
+	document.getElementById(id).removeAttribute("disabled");
+}
+function hideById(id){
+	document.getElementById(id).setAttribute("hidden","hidden");
+}
+function unHideById(id){
+	document.getElementById(id).removeAttribute("hidden");
+}
+function setValue(id,val){
+	document.getElementById(id).value=val;
+}
+function getValue(id){
+	return document.getElementById(id).value;
+}
+function updateFieldsOnSelection(){
+	var selectBox=document.getElementById("electionBox");
+	var selectedValue=selectBox.options[selectBox.selectedIndex].value;
+	var electionName=document.getElementById("electionName");
+	var startDate=document.getElementById("startDate");
+	var endDate=document.getElementById("endDate")
+	electionName.value=selectedValue;
+	hideById("save_button");
+	disableById("electionName");
+	disableById("startDate");
+	disableById("endDate");
+	var elections=JSON.parse(JSON.stringify(${jsonElections}));
+	for(i=0;i<elections.length;i++){
+		if((elections[i].electionName)===selectedValue){
+			startDate.value=elections[i].electionDetails.START_DATE;
+			endDate.value=elections[i].electionDetails.END_DATE;
+			break;
+		}
 	}
 }
-function enableButtonAfterTimeout() {
-	document.getElementById("otpButton").disabled=true;
-	countDown();
-	setTimeout(function(){document.getElementById("otpButton").disabled=false;},12*1000);
 
+function add(){
+	disableById("modify_button");
+	disableById("delete_button");
+	enableById("electionName");
+	setValue("electionName","");
+	enableById("startDate");
+	setValue("startDate","");
+	enableById("endDate");
+	setValue("endDate","");
+	unHideById("save_button");
+}
+function modify(){
+	if(getValue("electionName")==""){
+		alert("No election selected");
+	}else{
+		enableById("electionName");
+		enableById("startDate");
+		enableById("endDate");
+		unHideById("save_button");
+	}
 }

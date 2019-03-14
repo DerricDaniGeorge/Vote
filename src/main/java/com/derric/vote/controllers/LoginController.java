@@ -18,6 +18,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.datastax.driver.core.exceptions.NoHostAvailableException;
 import com.derric.vote.beans.User;
+import com.derric.vote.beans.VoteConstants;
+import com.derric.vote.constants.PageConstants;
+import com.derric.vote.constants.URLConstants;
 import com.derric.vote.forms.LoginForm;
 import com.derric.vote.services.UserServices;
 import com.derric.vote.validators.LoginFormValidator;
@@ -25,7 +28,6 @@ import com.derric.vote.validators.LoginFormValidator;
 @Controller
 public class LoginController {
 	
-	private static final Logger logger = LogManager.getLogger("GLOBAL");
 
 	@Autowired
 	private UserServices userServices;
@@ -34,27 +36,33 @@ public class LoginController {
 
 	@RequestMapping(value = "/")
 	public String showWelcomePage() {
-		return "redirect:/login";
+		return "redirect:/"+URLConstants.LOGIN;
 	}
 
-	@RequestMapping(value = "/login", method = RequestMethod.GET)
+	@RequestMapping(value = "/"+URLConstants.LOGIN, method = RequestMethod.GET)
 	public String showLoginPage(Model model) {
 		LoginForm loginForm = new LoginForm();
 		model.addAttribute("loginForm", loginForm);
-		return "login";
+		return PageConstants.LOGIN_PAGE;
 	}
 
-	@RequestMapping(value = "/login", method = RequestMethod.POST)
+	@RequestMapping(value = "/"+URLConstants.LOGIN, method = RequestMethod.POST)
 	public String login(HttpServletRequest request, Model model,
 			@ModelAttribute("loginForm") @Validated LoginForm loginForm, BindingResult result) {
 		if (result.hasErrors()) {
-			return "login";
+			return PageConstants.LOGIN_PAGE;
 		}
 		User user = new User();
 		user.setVotersId(loginForm.getVotersID());
 		user.setPassword(loginForm.getPassword());
-		if (userServices.doLogin(user)) {
-			return "castVote";
+		String role=userServices.doLogin(user);
+		if (role!=null) {
+			request.getSession().setAttribute("user", user);
+			if(role.equalsIgnoreCase(VoteConstants.ADMIN.toString())) {
+			return "redirect:/"+URLConstants.ADMIN_ELECTION;
+			}else {
+				return PageConstants.CAST_VOTE_PAGE;
+			}
 		}
 		model.addAttribute("invalidCredentials", "Invalid username or password");
 		return "login";
@@ -64,18 +72,5 @@ public class LoginController {
 	public void initBinder(WebDataBinder binder) {
 		binder.setValidator(loginFormValidator);
 	}
-/*	
-	@ExceptionHandler(NoHostAvailableException.class)
-	public String handle(NoHostAvailableException dae) {
-		logger.error("Couldn't communicate with database");
-		logger.error(dae);
-		return "dbConnectionError";
-	}
-
-	@ExceptionHandler
-	public String defaultError(Exception ex) {
-		logger.error(ex);
-		return "defaultError";
-	}  */
 
 }

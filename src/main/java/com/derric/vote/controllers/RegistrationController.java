@@ -3,15 +3,12 @@ package com.derric.vote.controllers;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,9 +16,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 
-import com.datastax.driver.core.exceptions.NoHostAvailableException;
 import com.derric.vote.beans.User;
 import com.derric.vote.beans.UserDetail;
+import com.derric.vote.constants.PageConstants;
+import com.derric.vote.constants.URLConstants;
 import com.derric.vote.forms.RegisterUserForm;
 import com.derric.vote.services.UserServices;
 import com.derric.vote.utils.MailSender;
@@ -44,23 +42,23 @@ public class RegistrationController {
 	@Autowired
 	private OTPExpirer otpExpirer;
 
-	@RequestMapping(value = { "/registerUser" }, method = RequestMethod.GET)
+	@RequestMapping(value = { "/"+URLConstants.REGISTER_USER }, method = RequestMethod.GET)
 	public String showRegistrationPage(Model model) {
 		RegisterUserForm registerUserForm = new RegisterUserForm();
 		model.addAttribute("registerUserForm", registerUserForm);
-		return "registrationForm";
+		return PageConstants.REGISTRATION_FORM;
 	}
 
-	@RequestMapping(value = "/registerUser", method = RequestMethod.POST)
+	@RequestMapping(value = "/"+URLConstants.REGISTER_USER, method = RequestMethod.POST)
 	public String submitForm(SessionStatus status, HttpServletRequest request, Model model,HttpSession session,
 			@ModelAttribute("registerUserForm") @Validated RegisterUserForm registerUserForm, BindingResult result) {
 		if (result.hasErrors()) {
-			return "registrationForm";
+			return PageConstants.REGISTRATION_FORM;
 		} else {
 			User user = new User();
 			user.setVotersId(registerUserForm.getVotersID().trim());
 			user.setDetail(UserDetail.EMAIL, registerUserForm.getEmail().trim());
-			if (!userServices.isUserAlreadyExist(user)) {
+			if (!userServices.isAccountAlreadyExist(user)) {
 				model.addAttribute("user", user);
 				String otp = otpGenerator.generateOTP();
 				System.out.println("/registerUser post: "+otp);
@@ -70,18 +68,18 @@ public class RegistrationController {
 				// mailSender.sendOTP(registerUserForm.getEmail().trim(),otp); //Uncomment this
 				// line later
 				model.addAttribute("session",session);
-				return "otpForm";
+				return PageConstants.OTP_FORM;
 			} else {
 				model.addAttribute("msgUserExists", "User with Voter's ID: " + registerUserForm.getVotersID()
 						+ " or email id: " + registerUserForm.getEmail() + " already exists.");
-				return "registrationForm";
+				return PageConstants.REGISTRATION_FORM;
 			}
 		}
 	}
 
-	@RequestMapping(value = "/AccountCreatedSuccess")
+	@RequestMapping(value = "/"+URLConstants.ACCOUNT_CREATED_SUCCESS)
 	public String showSuccessMsg() {
-		return "accountCreatedSuccess";
+		return PageConstants.SUCCESS_ACCOUNT_CREATION_PAGE;
 	}
 
 /*	@RequestMapping(value = "/OTPForm", method = RequestMethod.GET)    This code is for testing purpose, delete it once developed
@@ -91,7 +89,7 @@ public class RegistrationController {
 		return "otpForm";
 	} */
 
-	@RequestMapping(value = "/OTPForm", method = RequestMethod.POST)
+	@RequestMapping(value = "/"+URLConstants.OTP_FORM, method = RequestMethod.POST)
 	public String verifyOTP(HttpServletRequest request,
 			@ModelAttribute("registerUserForm") RegisterUserForm registerUserForm, @ModelAttribute("user") User user,HttpSession session,
 			Model model, SessionStatus status) {
@@ -106,13 +104,13 @@ public class RegistrationController {
 			otpExpirer.cancelTimer();
 			status.setComplete();
 			session.invalidate();
-			return "redirect:AccountCreatedSuccess";
+			return "redirect:/"+URLConstants.ACCOUNT_CREATED_SUCCESS;
 		}
 		model.addAttribute("invalidOTP", "Invalid OTP");
-		return "otpForm";
+		return PageConstants.OTP_FORM;
 	}
 
-	@RequestMapping(value = "/generateOTP",method=RequestMethod.GET)
+	@RequestMapping(value = "/"+URLConstants.GENERATE_OTP,method=RequestMethod.GET)
 	public String generateOTP(HttpServletRequest request, Model model,HttpSession session) {
 		System.out.println("/generateOTP GET,session id: "+session.getId());
 		System.out.println("Inside generateOTP get,otp in session: "+session.getAttribute("otp"));
@@ -126,7 +124,7 @@ public class RegistrationController {
 		session.setAttribute("otpCount", otpCount);
 		System.out.println("Inside generateOTP get,otp in session after setting it again: "+session.getAttribute("otp"));
 		otpExpirer.expireOTP(session,otp);
-		return "otpForm";
+		return PageConstants.OTP_FORM;
 	}
 
 	@InitBinder("registerUserForm") // if values in bracket here is not specified,spring will use this validator for

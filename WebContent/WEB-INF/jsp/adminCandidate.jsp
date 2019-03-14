@@ -1,37 +1,31 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1"%>
+	pageEncoding="ISO-8859-1"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="ISO-8859-1">
-<title>Candidate-Admin Page</title>
+<title>Add Candidate</title>
+<style>
+.errorText{color:#ff0000;font-weight:bold}
+</style>
 </head>
-<body>
-<form action="">
-<select>
-<option value="1">C++</option>
-<option value="1">Ruby</option>
-<option value="1">C++</option>
-<option value="1">C++</option>
-</select>
-<br><br>
-<select size="20" multiple="multiple">
-<option value="1">C++</option>
-<option value="1">SQL</option>
-<option value="1">C++</option>
-<option value="1">C++</option>
-</select>
-<input type="button" value="ADD"/>
-<input type="button" value="REMOVE"/>
-
-<select size="20" multiple="multiple">
-<option value="1">Java</option>
-<option value="1">Java</option>
-<option value="1">Java</option>
-<option value="1">Java</option>
-</select>
-<input type="submit" value="SAVE"/>
-</form>
+<body onload="showSaveButton()">
+<form:form method="POST" modelAttribute="candidateForm">
+	First Name:
+	<form:input id="firstName"  size="40" path="firstName" value=""/><form:errors path="firstName" cssClass="errorText"/>
+	<br> Last Name:<form:input id="lastName"  path="lastName" /><form:errors path="lastName" cssClass="errorText"/> Party:
+	<form:input id="party"     path="party" /><form:errors path="party" cssClass="errorText"/>
+	<br>
+	Age:	<form:input id="age"  type="number"   path="age" /><form:errors path="age" cssClass="errorText"/><br>
+	Upload Profile Image:<form:input id="profile_img" path="" type="file"/><br>
+	
+	Upload Symbol:<form:input id="symbol" path="" type="file"/><br>
+	<input type="submit" id="save_button" value="SAVE" hidden/>
+</form:form>	
+<script>
+</script>
 </body>
-
 </html>

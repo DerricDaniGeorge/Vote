@@ -1,8 +1,9 @@
 package com.derric.vote.dao;
 
 import java.time.LocalDate;
-
-import org.springframework.dao.DataAccessException;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.Date;
 
 import com.datastax.driver.core.BoundStatement;
 import com.datastax.driver.core.PreparedStatement;
@@ -11,7 +12,9 @@ import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
 import com.derric.vote.beans.User;
 import com.derric.vote.beans.UserDetail;
-import com.derric.vote.constants.ICqlConstants;
+import com.derric.vote.beans.VoteConstants;
+import com.derric.vote.constants.CqlConstants;
+import com.derric.vote.constants.QueryConstants;
 
 public class UserDBServiceCassandra implements IUserDBService {
 
@@ -23,22 +26,28 @@ public class UserDBServiceCassandra implements IUserDBService {
 
 	@Override
 	public void insertUser(User user) {
+		try {
 		LocalDate date=(LocalDate) user.getDetail(UserDetail.DATE_OF_BIRTH);
-		com.datastax.driver.core.LocalDate cassandraDate=com.datastax.driver.core.LocalDate.fromMillisSinceEpoch(date.toEpochDay());
-		PreparedStatement ps = session.prepare(ICqlConstants.ADD_USER_APP_USER);
+		com.datastax.driver.core.LocalDate cassandraDate=com.datastax.driver.core.LocalDate.fromYearMonthDay(date.getYear(), date.getMonthValue(), date.getDayOfMonth());
+		ZonedDateTime timeNow=ZonedDateTime.now(ZoneId.of("Asia/Calcutta"));
+		Date dateForCassandra=Date.from(timeNow.toInstant());
+		PreparedStatement ps = session.prepare(QueryConstants.ADD_USER_APP_USER);
 		BoundStatement bs = ps.bind(user.getVotersId(), user.getDetail(UserDetail.FIRST_NAME),
 				user.getDetail(UserDetail.MIDDLE_NAME), user.getDetail(UserDetail.LAST_NAME),
 				user.getDetail(UserDetail.GENDER), cassandraDate,
-				user.getDetail(UserDetail.EMAIL), user.getPassword(),"VOTER");
+				user.getDetail(UserDetail.EMAIL), user.getPassword(),VoteConstants.VOTER.toString(),VoteConstants.ACTIVE.toString(),dateForCassandra,dateForCassandra,user.getVotersId());
 		session.executeAsync(bs);
-		session.executeAsync(insertUser_user_by_email(user));
+		session.executeAsync(insertUserUserByEmail(user));
+		}catch(Exception e) {
+			throw e;
+		}
 	}
 
-	public BoundStatement insertUser_user_by_email(User user) {
-		PreparedStatement ps=session.prepare(ICqlConstants.ADD_USER_USER_BY_EMAIL);
-		BoundStatement bs=ps.bind(user.getVotersId(),user.getDetail(UserDetail.FIRST_NAME),user.getDetail(UserDetail.MIDDLE_NAME),
+	public BoundStatement insertUserUserByEmail(User user) {
+		PreparedStatement ps=session.prepare(CqlConstants.ADD_USER_USER_BY_EMAIL);
+		return ps.bind(user.getVotersId(),user.getDetail(UserDetail.FIRST_NAME),user.getDetail(UserDetail.MIDDLE_NAME),
 				user.getDetail(UserDetail.LAST_NAME),user.getDetail(UserDetail.EMAIL));
-		return bs;
+	
 	}
 
 	@Override
@@ -57,7 +66,7 @@ public class UserDBServiceCassandra implements IUserDBService {
 	public String getVotersId(User user) {
 		String votersId=null;
 		try {
-			PreparedStatement ps = session.prepare(ICqlConstants.GET_VOTERSID_BY_VOTERSID);
+			PreparedStatement ps = session.prepare(QueryConstants.GET_VOTERSID_BY_VOTERSID);
 			BoundStatement bs=ps.bind(user.getVotersId());
 			ResultSet rs=session.execute(bs);
 			Row row=rs.one();
@@ -75,7 +84,7 @@ public class UserDBServiceCassandra implements IUserDBService {
 	public String getEmailAddress(User user) {
 		String email=null;
 		try {
-		PreparedStatement ps = session.prepare(ICqlConstants.GET_EMAILID_BY_EMAILID);
+		PreparedStatement ps = session.prepare(QueryConstants.GET_EMAILID_BY_EMAILID);
 		BoundStatement bs=ps.bind(user.getDetail(UserDetail.EMAIL));
 		//ResultSetFuture future=session.executeAsync(bs);
 		ResultSet rs=session.execute(bs);
@@ -95,7 +104,7 @@ public class UserDBServiceCassandra implements IUserDBService {
 		String password=null;
 		System.out.println("voters_id-->"+user.getVotersId());
 		try {
-		PreparedStatement ps = session.prepare(ICqlConstants.GET_PASSWORD_BY_VOTERSID);
+		PreparedStatement ps = session.prepare(QueryConstants.GET_PASSWORD_BY_VOTERSID);
 		BoundStatement bs=ps.bind(user.getVotersId());
 		//ResultSetFuture future=session.executeAsync(bs);
 		ResultSet rs=session.execute(bs);
@@ -108,6 +117,25 @@ public class UserDBServiceCassandra implements IUserDBService {
 			throw e;
 		}
 		return password;
+
+	}
+	public String getUserRole(User user) {
+		String role=null;
+		System.out.println("voters_id-->"+user.getVotersId());
+		try {
+		PreparedStatement ps = session.prepare(QueryConstants.GET_ROLE_BY_VOTERSID);
+		BoundStatement bs=ps.bind(user.getVotersId());
+		//ResultSetFuture future=session.executeAsync(bs);
+		ResultSet rs=session.execute(bs);
+		Row row=rs.one();
+		if(row!=null) {
+			role=row.getString("role");
+		}
+		System.out.println("role-->"+role);	
+		}catch(Exception e) {
+			throw e;
+		}
+		return role;
 
 	}
 
