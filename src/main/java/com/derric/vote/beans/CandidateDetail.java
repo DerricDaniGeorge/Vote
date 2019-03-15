@@ -1,0 +1,5 @@
+package com.derric.vote.beans;
+
+public enum CandidateDetail {
+	FIRST_NAME,LAST_NAME,PARTY,AGE,PROFILE_PHOTO,ELECTION_SYMBOL,PROFILE_PHOTO_LENGTH,SYMBOL_IMG_LENGTH;
+}

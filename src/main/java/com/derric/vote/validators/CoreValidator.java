@@ -1,6 +1,9 @@
 package com.derric.vote.validators;
 
 import java.time.LocalDate;
+import java.util.List;
+
+import javax.servlet.http.Part;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.Errors;
@@ -58,5 +61,29 @@ public class CoreValidator {
 				errors.rejectValue(fieldName, errorCode,defaultMessage);
 		}
 	}
-	
+	public void rejectIfValueNotInRange(Errors errors, int lowerLimit,int upperLimit,int value,String fieldName,String errorCode,String defaultMessage) {
+		if(!(value>=lowerLimit && value<=upperLimit)) {
+			errors.rejectValue(fieldName, errorCode,defaultMessage);
+		}
+	}
+	public boolean rejectIfNoUploadFileFound(Errors errors, Part part,String fieldName,String errorCode,String defaultMessage) {
+		boolean isRejected=false;
+		if(part.getSubmittedFileName().isEmpty()) {
+			errors.rejectValue(fieldName, errorCode,defaultMessage);
+			isRejected=true;
+		}
+		return isRejected;
+	}
+	public boolean rejectIfNotExpectedFileType(Errors errors,Part part,List<String> fileExtensions,String fieldName,String errorCode,String defaultMessage) {
+		boolean isRejected=false;
+		String fileName=part.getSubmittedFileName();
+		System.out.println("fileName==>"+fileName);
+		String extension=fileName.substring(fileName.indexOf('.'), fileName.length());
+		System.out.println("extension==>"+extension);
+		if(!fileExtensions.contains(extension)) {
+			errors.rejectValue(fieldName, errorCode,defaultMessage);
+			isRejected=true;
+		}
+		return isRejected;
+	}
 }

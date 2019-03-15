@@ -10,5 +10,6 @@ public class QueryConstants {
 	public static final String GET_PASSWORD_BY_VOTERSID = "SELECT password FROM app_user WHERE voters_id=?";
 	public static final String GET_ROLE_BY_VOTERSID = "SELECT role FROM app_user WHERE voters_id=?";
 	public static final String GET_ALL_ELECTION_NAMES="SELECT election_name from election_by_startdate";
+	public static final String GET_CANDIDATE_VOTERSID_BY_VOTERSID = "SELECT voters_id FROM candidate WHERE voters_id=?";
 
 }

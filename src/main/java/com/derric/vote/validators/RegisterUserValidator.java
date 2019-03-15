@@ -39,7 +39,7 @@ public class RegisterUserValidator implements Validator {
 		coreValidator.rejectNotStringContainsOnlyAlphabetsAndNumbers(errors, registerForm.getVotersID(), "votersID", "votersID.othercharacters", "VotersID must contains only letters and digits");
 		coreValidator.rejectNotStringExactCharacters(errors, registerForm.getVotersID(), VOTERSID_DB_SIZE, "votersID", "votersID.noexactcharacters", "Invalid Voter's ID. Must have "+VOTERSID_DB_SIZE+" characters");
 		coreValidator.rejectNotStringMaxCharacters(errors, registerForm.getFirstName(), FIRSTNAME_DB_SIZE, "firstName", "invalid.firstName", "Maximum " + FIRSTNAME_DB_SIZE + " characters permitted");
-		coreValidator.rejectNotStringContainsOnlyAlphabets(errors, registerForm.getFirstName(),"firstName", "fistName.specialCharacters", "First name must contains alphabets only");
+		coreValidator.rejectNotStringContainsOnlyAlphabets(errors, registerForm.getFirstName(),"firstName", "firstName.specialCharacters", "First name must contains alphabets only");
 		coreValidator.rejectNotStringContainsOnlyAlphabets(errors, registerForm.getMiddleName(),"middleName", "middleName.specialCharacters", "Middle name must contains alphabets only");
 		coreValidator.rejectNotStringMaxCharacters(errors, registerForm.getMiddleName(), MIDDLENAME_DB_SIZE, "middleName", "invalid.middleName", "Maximum " + MIDDLENAME_DB_SIZE + " characters permitted");
 		coreValidator.rejectNotStringContainsOnlyAlphabets(errors, registerForm.getLastName(),"lastName", "lastName.specialCharacters", "Last name must contains alphabets only");

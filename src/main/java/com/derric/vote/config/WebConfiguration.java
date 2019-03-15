@@ -13,6 +13,8 @@ import org.springframework.context.annotation.PropertySources;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.format.FormatterRegistry;
+import org.springframework.web.multipart.MultipartResolver;
+import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 //import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -27,6 +29,7 @@ import com.derric.vote.utils.MailSender;
 import com.derric.vote.utils.OTPExpirer;
 import com.derric.vote.utils.OTPGenerator;
 import com.derric.vote.utils.StringUtils;
+import com.derric.vote.validators.AdminCandidateValidator;
 import com.derric.vote.validators.AdminElectionValidator;
 import com.derric.vote.validators.CoreValidator;
 import com.derric.vote.validators.LoginFormValidator;
@@ -74,6 +77,10 @@ public class WebConfiguration implements WebMvcConfigurer {
 	@Bean
 	public AdminElectionValidator adminElectionValidator() {
 		return new AdminElectionValidator();
+	}
+	@Bean
+	public AdminCandidateValidator adminCandidateValidator() {
+		return new AdminCandidateValidator();
 	}
 	@Bean
 	public CoreValidator coreValidator() {
@@ -157,6 +164,10 @@ public class WebConfiguration implements WebMvcConfigurer {
 	@Bean
 	public Timer timer() {
 		return new Timer();
+	}
+	//This bean helps to upload files to server
+	public MultipartResolver multipartResolver() {
+		return new StandardServletMultipartResolver();
 	}
 	
 }

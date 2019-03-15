@@ -59,7 +59,7 @@ public class LoginController {
 		if (role!=null) {
 			request.getSession().setAttribute("user", user);
 			if(role.equalsIgnoreCase(VoteConstants.ADMIN.toString())) {
-			return "redirect:/"+URLConstants.ADMIN_ELECTION;
+			return "redirect:/"+URLConstants.ADMIN_CANDIDATE;
 			}else {
 				return PageConstants.CAST_VOTE_PAGE;
 			}
