@@ -15,7 +15,7 @@ table{ border : 1px solid black;border-collapse: collapse;}
 th,td{border: 2px solid;width:300px;text-align:center;padding: 30px;}
 </style>
 </head>
-<body>
+<body onload="clickFirstOption()">
 <form:form method="POST" modelAttribute="candidateForm" enctype="multipart/form-data"> <!-- 	enctype is important -->
 	Voter's ID:<form:input id="votersId"  size="40" path="votersId" value=""/><form:errors path="votersId" cssClass="errorText"/>
 	First Name:
@@ -29,7 +29,15 @@ th,td{border: 2px solid;width:300px;text-align:center;padding: 30px;}
 	<input id="upload_profile_img" type="button" value="Upload" /><br>
 	Upload Symbol:<form:input id="symbol"  type="file" name="symbol" accept="image/jpeg,image/png,image/gif" path="symbol"/><form:errors path="symbol" cssClass="errorText"/><br>
 	<input id="upload_symbol_img" type="button" value="Upload"/><br>
-	<form:select path=""></form:select>
+	States:
+	<form:select path="state" id="stateBox"  name="state" onchange="getMappedConstituencies()">
+	<c:forEach var="state" items="${states}">
+		<form:option value="${state}">${state}</form:option>
+	</c:forEach>
+	</form:select>
+	<br>
+	LokSabha Constituency:<form:select id="constituencyBox" name="constituency" path="constituency">
+	</form:select>
 	<input type="submit" id="save_button" value="SAVE"/>
 </form:form>
 <table>
@@ -46,6 +54,36 @@ th,td{border: 2px solid;width:300px;text-align:center;padding: 30px;}
 </c:forEach>
 </table>
 <script>
+function getMappedConstituencies(){
+	var stateBox=document.getElementById("stateBox");
+	var selectedValue=stateBox.options[stateBox.selectedIndex].value;
+	var xhttp=new XMLHttpRequest();
+	xhttp.onreadystatechange=function(){
+		if(this.readyState==4 && this.status==200){
+			loadConstituenciesToDropdownList(this.responseText);
+		}
+	};
+	xhttp.open("GET","${pageContext.request.contextPath}/getMappedLokConstituency?state="+selectedValue,true);
+	xhttp.send();
+}
+function loadConstituenciesToDropdownList(jsonText){
+	clearOptionsInDropdown("constituencyBox");
+	var obj=JSON.parse(jsonText);
+	var constituencyBox=document.getElementById("constituencyBox");
+	for(i in obj){
+		var option=document.createElement("option");
+		option.text=obj[i]["constituencyName"];
+		option.value=obj[i]["constituencyName"];
+		constituencyBox.add(option);
+	}
+}
+function clearOptionsInDropdown(id){
+	document.getElementById(id).options.length = 0;
+}
+function clickFirstOption(){
+	document.getElementById("stateBox").selectedIndex="0";
+	getMappedConstituencies();
+}
 </script>
 </body>
 </html>

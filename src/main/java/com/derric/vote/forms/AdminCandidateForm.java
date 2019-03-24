@@ -7,6 +7,23 @@ public class AdminCandidateForm {
 	private String firstName;
 	private String lastName;
 	private String party;
+	private String state;
+	private String constituency;
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
+	}
+
+	public String getConstituency() {
+		return constituency;
+	}
+
+	public void setConstituency(String constituency) {
+		this.constituency = constituency;
+	}
 
 	private int age;
 	private Part profilePhoto;

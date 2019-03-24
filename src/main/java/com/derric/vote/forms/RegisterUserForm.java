@@ -11,6 +11,23 @@ public class RegisterUserForm extends LoginForm {
 	private LocalDate dateOfBirth;
 	private String email;
 	private String retypePassword;
+	private String state;
+	private String constituency;
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
+	}
+
+	public String getConstituency() {
+		return constituency;
+	}
+
+	public void setConstituency(String constituency) {
+		this.constituency = constituency;
+	}
 
 	public String getFirstName() {
 		return firstName;

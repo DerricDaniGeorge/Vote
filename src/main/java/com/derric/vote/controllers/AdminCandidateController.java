@@ -37,6 +37,7 @@ import com.derric.vote.constants.PageConstants;
 import com.derric.vote.constants.URLConstants;
 import com.derric.vote.forms.AdminCandidateForm;
 import com.derric.vote.services.CandidateServices;
+import com.derric.vote.services.ElectionServices;
 import com.derric.vote.validators.AdminCandidateValidator;
 import com.derric.vote.validators.CoreValidator;
 
@@ -50,6 +51,8 @@ public class AdminCandidateController {
 	private CandidateServices candidateServices;
 	@Autowired
 	private CoreValidator coreValidator;
+	@Autowired
+	public ElectionServices electionServices;
 
 	@RequestMapping(value = "/" + URLConstants.ADMIN_CANDIDATE, method = RequestMethod.GET)
 	public String showAddCandidate(Model model) {
@@ -58,6 +61,7 @@ public class AdminCandidateController {
 		candidates.stream().parallel().forEach(action ->convertToBase64(action));
 		model.addAttribute("candidateForm", candidateForm);
 		model.addAttribute("candidates",candidates);
+		model.addAttribute("states", electionServices.getAllStates());
 		return PageConstants.ADMIN_CANDIDATE_PAGE;
 	}
 	public void convertToBase64(Candidate candidate) {

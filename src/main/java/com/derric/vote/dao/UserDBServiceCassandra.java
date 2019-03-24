@@ -35,7 +35,7 @@ public class UserDBServiceCassandra implements IUserDBService {
 		BoundStatement bs = ps.bind(user.getVotersId(), user.getDetail(UserDetail.FIRST_NAME),
 				user.getDetail(UserDetail.MIDDLE_NAME), user.getDetail(UserDetail.LAST_NAME),
 				user.getDetail(UserDetail.GENDER), cassandraDate,
-				user.getDetail(UserDetail.EMAIL), user.getPassword(),VoteConstants.VOTER.toString(),VoteConstants.ACTIVE.toString(),dateForCassandra,dateForCassandra,user.getVotersId());
+				user.getDetail(UserDetail.EMAIL), user.getPassword(),VoteConstants.VOTER.toString(),VoteConstants.ACTIVE.toString(),dateForCassandra,dateForCassandra,user.getVotersId(),user.getDetail(UserDetail.STATE),user.getDetail(UserDetail.LOKSABHA_CONSTITUENCY));
 		session.executeAsync(bs);
 		session.executeAsync(insertUserUserByEmail(user));
 		}catch(Exception e) {

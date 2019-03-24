@@ -122,7 +122,7 @@ public class ElectionServices {
 			}
 		}
 		if(isConstituencyAdded) {
-		electionDBService.insertConstituency(constituency, user);
+			electionDBService.insertConstituency(constituency, user);
 		}
 		return isConstituencyAdded;
 	}

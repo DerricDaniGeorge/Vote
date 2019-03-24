@@ -40,6 +40,7 @@ var msg="${status}"
 if(typeof msg!=="undefined" && msg!==null && msg!==''){
 	alert(msg);
 }
+clickFirstOption();
 }
 function getMappedConstituencies(){
 	var stateBox=document.getElementById("stateBox");
@@ -60,11 +61,16 @@ function loadConstituenciesToDropdownList(jsonText){
 	for(i in obj){
 		var option=document.createElement("option");
 		option.text=obj[i]["constituencyName"];
+		option.value=obj[i]["constituencyName"];
 		constituencyBox.add(option);
 	}
 }
 function clearOptionsInDropdown(id){
 	document.getElementById(id).options.length = 0;
+}
+function clickFirstOption(){
+	document.getElementById("stateBox").selectedIndex="0";
+	getMappedConstituencies();
 }
 </script>
 </html>

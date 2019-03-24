@@ -27,6 +27,8 @@ public class UserServices {
 		user.setDetail(UserDetail.GENDER, registerUserForm.getGender().trim());
 		user.setDetail(UserDetail.EMAIL, registerUserForm.getEmail().trim());
 		user.setDetail(UserDetail.DATE_OF_BIRTH, registerUserForm.getDateOfBirth());
+		user.setDetail(UserDetail.STATE, registerUserForm.getState());
+		user.setDetail(UserDetail.LOKSABHA_CONSTITUENCY, registerUserForm.getConstituency());
 		userDBService.insertUser(user);
 	}
 

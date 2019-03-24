@@ -21,6 +21,7 @@ import com.derric.vote.beans.UserDetail;
 import com.derric.vote.constants.PageConstants;
 import com.derric.vote.constants.URLConstants;
 import com.derric.vote.forms.RegisterUserForm;
+import com.derric.vote.services.ElectionServices;
 import com.derric.vote.services.UserServices;
 import com.derric.vote.utils.MailSender;
 import com.derric.vote.utils.OTPExpirer;
@@ -41,11 +42,14 @@ public class RegistrationController {
 	private UserServices userServices;
 	@Autowired
 	private OTPExpirer otpExpirer;
+	@Autowired
+	public ElectionServices electionServices;
 
 	@RequestMapping(value = { "/"+URLConstants.REGISTER_USER }, method = RequestMethod.GET)
 	public String showRegistrationPage(Model model) {
 		RegisterUserForm registerUserForm = new RegisterUserForm();
 		model.addAttribute("registerUserForm", registerUserForm);
+		model.addAttribute("states", electionServices.getAllStates());
 		return PageConstants.REGISTRATION_FORM;
 	}
 
