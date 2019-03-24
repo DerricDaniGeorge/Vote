@@ -23,14 +23,16 @@ import com.derric.vote.beans.ElectionDetail;
 import com.derric.vote.beans.User;
 import com.derric.vote.constants.PageConstants;
 import com.derric.vote.constants.URLConstants;
+import com.derric.vote.forms.AdminAddStateForm;
 import com.derric.vote.forms.AdminElectionForm;
+import com.derric.vote.forms.RegisterUserForm;
 import com.derric.vote.services.ElectionServices;
 import com.derric.vote.validators.AdminElectionValidator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Controller
-@SessionAttributes(value = { "electionForm", "elections", "jsonElections" })
+@SessionAttributes(value = { "electionForm", "elections", "jsonElections","addStateForm"})
 public class AdminElectionController {
 
 	@Autowired
@@ -70,7 +72,7 @@ public class AdminElectionController {
 			@ModelAttribute("elections") List<Election> elections,
 			@ModelAttribute("jsonElections") String jsonElections, RedirectAttributes redirectAttributes) {
 		if (result.hasErrors()) {
-			model.addAttribute("hasErrors", true);
+			model.addAttribute("hasErrors", "true");
 			model.addAttribute("elections", elections);
 			model.addAttribute("jsonElections", jsonElections);
 			return PageConstants.ADMIN_ELECTION_PAGE;
@@ -95,9 +97,10 @@ public class AdminElectionController {
 		System.out.println("action:" + action);
 		return "redirect:/" + PageConstants.ADMIN_ELECTION_PAGE;
 	}
-
+	
 	@InitBinder("electionForm")
 	public void initBinder(WebDataBinder binder) {
 		binder.setValidator(electionValidator);
 	}
+	
 }

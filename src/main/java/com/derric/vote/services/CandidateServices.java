@@ -1,7 +1,15 @@
 package com.derric.vote.services;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.Base64;
+import java.util.List;
+
+import javax.servlet.http.Part;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -22,13 +30,27 @@ public class CandidateServices {
 		String encoded= Base64.getEncoder().encodeToString(bImage.array());
 		return encoded;
 	} */
-	public void addCandidate(AdminCandidateForm candidateForm,User user) {
+	public void addCandidate(AdminCandidateForm candidateForm,User user,Part profileImage,Part symbolImage) throws IOException {
 		Candidate candidate=new Candidate();
 		candidate.setVotersId(candidateForm.getVotersId());
-		candidate.setDetail(CandidateDetail.FIRST_NAME,candidateForm.getFirstName());
-		candidate.setDetail(CandidateDetail.LAST_NAME,candidateForm.getLastName());
-		candidate.setDetail(CandidateDetail.PARTY, candidateForm.getParty());
+		candidate.setDetail(CandidateDetail.FIRST_NAME,candidateForm.getFirstName().trim());
+		candidate.setDetail(CandidateDetail.LAST_NAME,candidateForm.getLastName().trim());
+		candidate.setDetail(CandidateDetail.PARTY, candidateForm.getParty().trim());
 		candidate.setDetail(CandidateDetail.AGE, candidateForm.getAge());
-
+		candidate.setDetail(CandidateDetail.PROFILE_PHOTO,profileImage);
+		candidate.setDetail(CandidateDetail.SYMBOL, symbolImage);
+		candidate.setDetail(CandidateDetail.PROFILE_PHOTO_LENGTH, profileImage.getSize());
+		candidate.setDetail(CandidateDetail.SYMBOL_IMG_LENGTH, symbolImage.getSize());
+		try {
+		candidateDBService.insertCandidate(candidate,user);
+		}catch(IOException ioe) {
+			throw ioe;
+		}
+	}
+	public List<Candidate> getAllCandidates(){
+		for(Candidate c:candidateDBService.getAllCandidates()) {
+			System.out.println("candidate votersid:"+c.getVotersId());
+		}
+		return candidateDBService.getAllCandidates();
 	}
 }

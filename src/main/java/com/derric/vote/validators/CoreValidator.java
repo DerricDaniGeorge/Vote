@@ -34,11 +34,17 @@ public class CoreValidator {
 					errors.rejectValue(fieldName, errorCode,defaultMessage);
 		}
 	}
+	public void rejectNotStringContainsOnlyAlphabetsIgnoreSpace(Errors errors, String text,String fieldName,String errorCode,String defaultMessage) {
+		if (text != null && !text.isEmpty() && !stringUtils.containsOnlyAlphabetsIgnoreSpace(text)) {
+					errors.rejectValue(fieldName, errorCode,defaultMessage);
+		}
+	}
 	public void rejectNotStringContainsOnlyAlphabetsAndNumbers(Errors errors, String text,String fieldName,String errorCode,String defaultMessage) {
 		if (text != null && !text.isEmpty() && !stringUtils.containsOnlyLettersOrDigits(text)) {
 					errors.rejectValue(fieldName, errorCode,defaultMessage);
 		}
 	}
+	
 	public void rejectNotTwoStringsAreExactlyEqual(Errors errors, String text1,String text2,String fieldName,String errorCode,String defaultMessage) {
 		if (text1 != null && text2!=null && !text1.equalsIgnoreCase(text2)) {
 				errors.rejectValue(fieldName, errorCode,defaultMessage);
@@ -81,6 +87,14 @@ public class CoreValidator {
 		String extension=fileName.substring(fileName.indexOf('.'), fileName.length());
 		System.out.println("extension==>"+extension);
 		if(!fileExtensions.contains(extension)) {
+			errors.rejectValue(fieldName, errorCode,defaultMessage);
+			isRejected=true;
+		}
+		return isRejected;
+	}
+	public boolean rejectIfFileSizeIsMore(Errors errors,Part part,long sizeInBytes,String fieldName,String errorCode,String defaultMessage) {
+		boolean isRejected=false;
+		if(part.getSize()>sizeInBytes) {
 			errors.rejectValue(fieldName, errorCode,defaultMessage);
 			isRejected=true;
 		}

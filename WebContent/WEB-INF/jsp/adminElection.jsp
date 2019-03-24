@@ -11,6 +11,7 @@
 <style>
 .errorText{color:#ff0000;font-weight:bold}
 </style>
+<script src="<c:url value="/js/vote.js"/>"></script>
 </head>
 <body onload="showSaveButton()">
 <form:form method="POST" modelAttribute="electionForm" onsubmit="doRequiredThings()" >
@@ -27,8 +28,8 @@
 	<form:input id="startDate" type="date"  path="startDate" /><form:errors path="startDate" cssClass="errorText"/> End Date:
 	<form:input id="endDate" type="date"    path="endDate" /><form:errors path="endDate" cssClass="errorText"/>
 	<br>
-	<input id="add_button" type="button" value="ADD"  onclick="add()" onmouseover="cancelAdding()"/>
-	<input id="modify_button" type="button" value="MODIFY" onclick="modify()" onmouseover="cancelModifying()"/>
+	<input id="add_button" type="button" value="ADD"  onclick="addElection()" onmouseover="cancelAdding()"/>
+	<input id="modify_button" type="button" value="MODIFY" onclick="modifyElection()" onmouseover="cancelModifying()"/>
 	<input id="delete_button" type="button" value="DELETE" onclick="deleteElection()" onmouseover="cancelDeteting()"/>
 	<p></p>
 	<input type="submit" id="save_button" value="SAVE" hidden/>
@@ -38,24 +39,6 @@
 	<input type="hidden" id="election_endDate" name="election_endDate" value=""/>
 </form:form>	
 <script>
-function disableById(id){
-	document.getElementById(id).setAttribute("disabled","disabled");
-}
-function enableById(id){
-	document.getElementById(id).removeAttribute("disabled");
-}
-function hideById(id){
-	document.getElementById(id).setAttribute("hidden","hidden");
-}
-function unHideById(id){
-	document.getElementById(id).removeAttribute("hidden");
-}
-function setValue(id,val){
-	document.getElementById(id).value=val;
-}
-function getValue(id){
-	return document.getElementById(id).value;
-}
 function updateFieldsOnSelection(){
 	var selectBox=document.getElementById("electionBox");
 	var selectedValue=selectBox.options[selectBox.selectedIndex].value;
@@ -82,108 +65,21 @@ function updateFieldsOnSelection(){
 			break;
 		}
 	}
-}
-
-function add(){
-	setValue("actionToDo","ADD");
-	disableById("modify_button");
-	disableById("delete_button");
-	enableById("electionName");
-	setValue("electionName","");
-	enableById("startDate");
-	setValue("startDate","");
-	enableById("endDate");
-	setValue("endDate","");
-	unHideById("save_button");
-}
-function modify(){
-	if(getValue("electionName")==""){
-		alert("No election selected");
-	}else{
-		setValue("actionToDo","MODIFY");
-		disableById("electionName");
-		enableById("startDate");
-		enableById("endDate");
-		unHideById("save_button");
-	}
-}
-function deleteElection(){
-	if(getValue("electionName")==""){
-		alert("No election selected");
-	}else{
-		setValue("actionToDo","DELETE");
-		alert("You are going to delete the election. Click on Save button to proceed deleting");
-		disableById("modify_button");
-		disableById("add_button");
-		unHideById("save_button");
-	}
-}
-function cancelDeteting(){
-	setValue("actionToDo","");
-	clearErrors();
-	hideById("save_button");
-	unHideById("modify_button");
-	unHideById("add_button");
-	enableById("modify_button");
-	enableById("add_button");
-}
+} 
 function showSaveButton(){
-var	hasErrors=${hasErrors}
-	console.log(hasErrors);
-	if(typeof hasErrors!=="undefined" && hasErrors!==null && hasErrors==true){
-	unHideById("save_button");
-	hideById("modify_button");
-	hideById("delete_button");
-	}
-	showAlert();
-}
-function clearErrors(){
-	var errorTexts=document.getElementsByClassName("errorText");
-	if(errorTexts!=null){
-	for(i=0;i<errorTexts.length;i++){
-		errorTexts[i].innerHTML="";
-	}
-	}
-}
-function cancelAdding(){
-	setValue("actionToDo","");
-	clearErrors();
-	hideById("save_button");
-	unHideById("modify_button");
-	unHideById("delete_button");
-	enableById("modify_button");
-	enableById("delete_button");
-}
-function showAlert(){
-	var electionStatus="${electionStatus}"
-	console.log(electionStatus);
-	if(typeof electionStatus!=="undefined" && electionStatus!==null && electionStatus!==''){
-		alert(electionStatus);
-	}
-}
-function cancelModifying(){
-	setValue("actionToDo","");
-	clearErrors();
-	hideById("save_button");
-	unHideById("modify_button");
-	unHideById("delete_button");
-	enableById("modify_button");
-	enableById("delete_button");
-	unHideById("add_button");
-	enableById("add_button");
-}
-function doRequiredThings(){
-	if(getValue("actionToDo")=="MODIFY"){
-		enableById("electionName");
-	}
-	if(getValue("actionToDo")=="DELETE"){
-		var confirmation= confirm("This action will permanantly delete this election and cannot be undone. Do you want to continue ?");
-		if(confirmation==true){
-			enableById("electionName");
-			enableById("startDate");
-			enableById("endDate");
-			return true;
+	var	hasErrors=${hasErrors}
+		console.log(hasErrors);
+		if(typeof hasErrors!=="undefined" && hasErrors!==null && hasErrors=="true"){
+		unHideById("save_button");
+		hideById("modify_button");
+		hideById("delete_button");
 		}
+		showAlert();
+	}
+function showAlert(){
+	var status="${electionStatus}"
+	if(typeof status!=="undefined" && status!==null && status!==''){
+		alert(status);
 	}
 }
 </script>

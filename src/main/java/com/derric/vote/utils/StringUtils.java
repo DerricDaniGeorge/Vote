@@ -13,6 +13,22 @@ public class StringUtils {
 		}
 		return true;
 	}
+	public boolean containsOnlyAlphabetsIgnoreSpace(String string) {
+		boolean onlyLetters=true;
+		if (string!=null) {
+			char[] chars = string.toCharArray();
+			for (char c : chars) {
+				if (!Character.isLetter(c)) {
+					if(c==' ') {
+						continue;
+					}
+					onlyLetters=false;
+					break;
+				}
+			}
+		}
+		return onlyLetters;
+	}
 
 	public boolean containsOnlyNumbers(String string) {
 		if (string!=null) {

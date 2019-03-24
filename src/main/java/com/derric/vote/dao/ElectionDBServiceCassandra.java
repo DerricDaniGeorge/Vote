@@ -5,7 +5,9 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import com.datastax.driver.core.BoundStatement;
@@ -14,8 +16,10 @@ import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.exceptions.NoHostAvailableException;
+import com.derric.vote.beans.Constituency;
 import com.derric.vote.beans.Election;
 import com.derric.vote.beans.ElectionDetail;
+import com.derric.vote.beans.State;
 import com.derric.vote.beans.User;
 import com.derric.vote.beans.VoteConstants;
 import com.derric.vote.constants.CqlConstants;
@@ -27,6 +31,7 @@ public class ElectionDBServiceCassandra implements IElectionDBService {
 	public ElectionDBServiceCassandra(Session session) {
 		this.session=session;
 	}
+	@Override
 	public List<Election> getNotStartedElections() {
 		List<Election> elections=new ArrayList<>();
 		try {
@@ -77,6 +82,7 @@ public class ElectionDBServiceCassandra implements IElectionDBService {
 		}
 		
 	}
+	@Override
 	public List<String> getAllElectionNames(){
 		List<String> electionNames=new ArrayList<>();
 		try {
@@ -118,6 +124,7 @@ public class ElectionDBServiceCassandra implements IElectionDBService {
 			throw e;
 		}
 	}
+	@Override
 	public Date getElectionCreationTime(Election election) {
 		Date electionCreationDate=null;
 		try {
@@ -136,6 +143,7 @@ public class ElectionDBServiceCassandra implements IElectionDBService {
 		}
 		return electionCreationDate;
 	}
+	@Override
 	public void deleteElection(Election election) {
 		try {
 			LocalDate startDate=(LocalDate) election.getDetail(ElectionDetail.START_DATE);
@@ -153,6 +161,163 @@ public class ElectionDBServiceCassandra implements IElectionDBService {
 		}catch(Exception e) {
 			throw e;
 		}
+	}
+	@Override
+	public List<String> getAllStateNames() {
+		List<String> stateNames=new ArrayList<>();
+		try {
+			ResultSet result=session.execute(CqlConstants.GET_ALL_STATES);
+			for(Row row:result) {
+				stateNames.add(row.getString("state"));
+			}
+		}catch(NoHostAvailableException nhae) {
+			throw nhae;
+		}catch(Exception e) {
+			throw e;
+		}
+		return stateNames;
+	}
+	@Override
+	public void insertState(State state, User user) {
+		try {
+			ZonedDateTime timeNow=ZonedDateTime.now(ZoneId.of("Asia/Calcutta"));
+			Date dateForCassandra=Date.from(timeNow.toInstant());
+			PreparedStatement ps=session.prepare(CqlConstants.ADD_STATE);
+			BoundStatement bs=ps.bind(state.getStateName(),dateForCassandra,user.getVotersId(),dateForCassandra);
+			session.execute(bs);
+		}catch(NoHostAvailableException nhae) {
+			throw nhae;
+		}catch(Exception e) {
+			throw e;
+		}
+		
+	}
+	@Override
+	public void deleteState(State state) {
+		try {
+			PreparedStatement ps=session.prepare(CqlConstants.DELETE_STATE);
+			BoundStatement bs=ps.bind(state.getStateName());
+			session.execute(bs);
+		}catch(NoHostAvailableException nhae) {
+			throw nhae;
+		}catch(Exception e) {
+			throw e;
+		}
+	}
+	@Override
+	public List<String> getAllLokSabhaConstituenciesName() {
+		List<String> constituencyNames=new ArrayList<>();
+		try {
+			ResultSet result=session.execute(CqlConstants.GET_ALL_LOKSABHA_CONSTITUECY_NAMES);
+			for(Row row:result) {
+				constituencyNames.add(row.getString("constituency"));
+			}
+		}catch(NoHostAvailableException nhae) {
+			throw nhae;
+		}catch(Exception e) {
+			throw e;
+		}
+		return constituencyNames;
+	}
+	@Override
+	public void insertConstituency(Constituency constituency, User user) {
+		try {
+			ZonedDateTime timeNow=ZonedDateTime.now(ZoneId.of("Asia/Calcutta"));
+			Date dateForCassandra=Date.from(timeNow.toInstant());
+			PreparedStatement ps=session.prepare(CqlConstants.ADD_LOKSAHBA_CONSTITUENCY);
+			BoundStatement bs=ps.bind(constituency.getConstituencyName(),dateForCassandra,user.getVotersId(),dateForCassandra);
+			session.execute(bs);
+		}catch(NoHostAvailableException nhae) {
+			throw nhae;
+		}catch(Exception e) {
+			throw e;
+		}	
+	}
+	@Override
+	public void deleteLoksabhaConstituency(Constituency constituency) {
+		try {
+			PreparedStatement ps=session.prepare(CqlConstants.DELETE_LOKSABHA_CONSTITUENCY);
+			BoundStatement bs=ps.bind(constituency.getConstituencyName());
+			session.execute(bs);
+		}catch(NoHostAvailableException nhae) {
+			throw nhae;
+		}catch(Exception e) {
+			throw e;
+		}
+	}
+	@Override
+	public void updateLoksabhaConstituencies(State state, List<Constituency> constituencyList, User user) {
+		try {
+			ZonedDateTime timeNow=ZonedDateTime.now(ZoneId.of("Asia/Calcutta"));
+			Date dateForCassandra=Date.from(timeNow.toInstant());
+			Set<String> constituencySet=new HashSet<>();
+			for(Constituency c: constituencyList) {
+				constituencySet.add(c.getConstituencyName());
+			}
+			PreparedStatement ps=session.prepare(CqlConstants.UPDATE_STATE_LOK_SABHA_MAPPING);
+			BoundStatement bs=ps.bind(dateForCassandra,user.getVotersId(),constituencySet,state.getStateName());
+			session.execute(bs);
+		}catch(NoHostAvailableException nhae) {
+			throw nhae;
+		}catch(Exception e) {
+			throw e;
+		}
+		
+	}
+	@Override
+	public String getStateOfLokSabhaMapping(State state) {
+		String stateName=null;
+		try {
+			PreparedStatement ps=session.prepare(CqlConstants.GET_STATE_LOK_SABHA_MAPPING);
+			BoundStatement bs=ps.bind(state.getStateName());
+			ResultSet result=session.execute(bs);
+			Row row=result.one();
+			if(row!=null) {
+				stateName=row.getString("state");
+			}
+		}catch(NoHostAvailableException nhae) {
+			throw nhae;
+		}catch(Exception e) {
+			throw e;
+		}
+		return stateName;
+	}
+	@Override
+	public void insertNewLoksabhaStateMapping(State state, List<Constituency> constituencyList, User user) {
+		try {
+			ZonedDateTime timeNow=ZonedDateTime.now(ZoneId.of("Asia/Calcutta"));
+			Date dateForCassandra=Date.from(timeNow.toInstant());
+			Set<String> constituencySet=new HashSet<>();
+			for(Constituency c: constituencyList) {
+				constituencySet.add(c.getConstituencyName());
+			}
+			PreparedStatement ps=session.prepare(CqlConstants.MAP_LOKSABHA_CONSTITUENCY);
+			BoundStatement bs=ps.bind(dateForCassandra,dateForCassandra,user.getVotersId(),state.getStateName(),constituencySet);
+			session.execute(bs);
+		}catch(NoHostAvailableException nhae) {
+			throw nhae;
+		}catch(Exception e) {
+			throw e;
+		}
+		
+	}
+	@Override
+	public Set<String> getStateMappedConstituencies(State state) {
+		Set<String> consituencySet=new HashSet<>();
+		try {
+			PreparedStatement ps=session.prepare(CqlConstants.GET_MAPPED_CONSTITUENCIES_STATE);
+			BoundStatement bs=ps.bind(state.getStateName());
+			ResultSet results=session.execute(bs);
+			Row row=results.one();
+			if(row!=null) {
+				consituencySet=row.getSet("loksabha_constituencies", String.class);
+			}
+		}catch(NoHostAvailableException nhae) {
+			throw nhae;
+		}catch(Exception e) {
+			throw e;
+		}
+		return consituencySet;
 	}
 }
 

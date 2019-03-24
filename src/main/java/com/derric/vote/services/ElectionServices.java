@@ -2,17 +2,22 @@ package com.derric.vote.services;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.derric.vote.beans.Constituency;
 import com.derric.vote.beans.Election;
 import com.derric.vote.beans.ElectionDetail;
+import com.derric.vote.beans.State;
 import com.derric.vote.beans.User;
 import com.derric.vote.beans.VoteConstants;
 import com.derric.vote.dao.IElectionDBService;
+import com.derric.vote.forms.AddLokSabhaConstituencyForm;
+import com.derric.vote.forms.AdminAddStateForm;
 import com.derric.vote.forms.AdminElectionForm;
 
 /**
@@ -46,7 +51,7 @@ public class ElectionServices {
 	public boolean addElection(AdminElectionForm electionForm,User user) {
 		boolean isElectionAdded=false;
 		Election election=new Election();
-		election.setElectionName(electionForm.getElectionName());
+		election.setElectionName(electionForm.getElectionName().trim());
 		election.setDetail(ElectionDetail.START_DATE,electionForm.getStartDate());
 		election.setDetail(ElectionDetail.END_DATE,electionForm.getEndDate());
 		election.setDetail(ElectionDetail.YEAR,electionForm.getStartDate().getYear());
@@ -61,7 +66,7 @@ public class ElectionServices {
 	}
 	public void updateElection(AdminElectionForm electionForm,User user,String oldElectionID,String oldStartDate,String oldEndDate) {
 		Election newElection=new Election();
-		newElection.setElectionName(electionForm.getElectionName());
+		newElection.setElectionName(electionForm.getElectionName().trim());
 		newElection.setDetail(ElectionDetail.START_DATE,electionForm.getStartDate());
 		newElection.setDetail(ElectionDetail.END_DATE,electionForm.getEndDate());
 		newElection.setDetail(ElectionDetail.YEAR,electionForm.getStartDate().getYear());
@@ -84,6 +89,83 @@ public class ElectionServices {
 		election.setDetail(ElectionDetail.END_DATE,endDateDate);
 		election.setDetail(ElectionDetail.YEAR,((LocalDate)election.getDetail(ElectionDetail.START_DATE)).getYear());
 		electionDBService.deleteElection(election);
+	}
+	public List<String> getAllStates(){
+		return electionDBService.getAllStateNames();
+	}
+	public boolean addState(AdminAddStateForm addStateForm,User user) {
+		boolean isStateAdded=true;
+		State state=new State();
+		state.setStateName(addStateForm.getState().trim());
+		for(String stateName:getAllStates()) {
+			if(stateName.equalsIgnoreCase(addStateForm.getState().trim())) {
+				isStateAdded=false;
+				break;
+			}
+		}
+		if(isStateAdded) {
+		electionDBService.insertState(state, user);
+		}
+		return isStateAdded;
+	}
+	public List<String> getAllLokSabhaConstituenciesName(){
+		return electionDBService.getAllLokSabhaConstituenciesName();
+	}
+	public boolean addLoksabhaConstituency(AddLokSabhaConstituencyForm addLokSabhaConstituencyForm,User user) {
+		boolean isConstituencyAdded=true;
+		Constituency constituency=new Constituency();
+		constituency.setConstituencyName(addLokSabhaConstituencyForm.getConstituency().trim());
+		for(String constituencyName:getAllLokSabhaConstituenciesName()) {
+			if(constituencyName.equalsIgnoreCase(addLokSabhaConstituencyForm.getConstituency().trim())) {
+				isConstituencyAdded=false;
+				break;
+			}
+		}
+		if(isConstituencyAdded) {
+		electionDBService.insertConstituency(constituency, user);
+		}
+		return isConstituencyAdded;
+	}
+	public void deleteState(AdminAddStateForm addStateForm) {
+		State state=new State();
+		state.setStateName(addStateForm.getState().trim());
+		electionDBService.deleteState(state);
+	}
+	public void deleteLoksabhaConstituency(AddLokSabhaConstituencyForm constituencyForm) {
+		Constituency constituency=new Constituency();
+		constituency.setConstituencyName(constituencyForm.getConstituency().trim());
+		electionDBService.deleteLoksabhaConstituency(constituency);
+	}
+
+	public void mapLoksabhaConstituencies(State state, String constituencies, User user) {
+		List<Constituency> constituencyList=new ArrayList<>();
+		String[] splittedConstituecies=constituencies.split("_");
+		for(int i=0;i<splittedConstituecies.length;i++) {
+			Constituency constituency=new Constituency();
+			constituency.setConstituencyName(splittedConstituecies[i]);
+			constituencyList.add(constituency);
+		}
+		if(isLokStateMappingAlreadyExist(state)) {
+			electionDBService.updateLoksabhaConstituencies(state,constituencyList,user);
+		}else {
+			electionDBService.insertNewLoksabhaStateMapping(state,constituencyList,user);
+		}
+	}
+	public boolean isLokStateMappingAlreadyExist(State state) {
+		return (electionDBService.getStateOfLokSabhaMapping(state)!=null)?true:false; 
+			
+	}
+
+	public List<Constituency> getMappedConstituenciesOfState(String stateName) {
+		List<Constituency> constituencyList=new ArrayList<>();
+		State state=new State();
+		state.setStateName(stateName);
+		for(String c:electionDBService.getStateMappedConstituencies(state)) {
+			Constituency constituency=new Constituency();
+			constituency.setConstituencyName(c);
+			constituencyList.add(constituency);
+		}
+		return constituencyList;
 	}
 
 }

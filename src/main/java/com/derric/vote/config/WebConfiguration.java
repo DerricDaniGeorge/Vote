@@ -24,11 +24,14 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
 import com.derric.vote.formatter.StringToLocalDateFormatter;
+import com.derric.vote.forms.AdminAddStateForm;
 import com.derric.vote.utils.JavaSendMailSMTPServer;
 import com.derric.vote.utils.MailSender;
 import com.derric.vote.utils.OTPExpirer;
 import com.derric.vote.utils.OTPGenerator;
 import com.derric.vote.utils.StringUtils;
+import com.derric.vote.validators.AddLokSabhaConstituencyValidator;
+import com.derric.vote.validators.AdminAddStateValidator;
 import com.derric.vote.validators.AdminCandidateValidator;
 import com.derric.vote.validators.AdminElectionValidator;
 import com.derric.vote.validators.CoreValidator;
@@ -41,7 +44,7 @@ import com.derric.vote.validators.RegisterUserValidator;
 @EnableWebMvc
 @PropertySources({ @PropertySource("classpath:application.properties"), @PropertySource("classpath:db.properties") })
 
-public class WebConfiguration implements WebMvcConfigurer {
+public class WebConfiguration implements WebMvcConfigurer{
 
 	private @Value("${email.server.host}") String host;
 	private @Value("${email.smtp.port}") int port;
@@ -86,7 +89,14 @@ public class WebConfiguration implements WebMvcConfigurer {
 	public CoreValidator coreValidator() {
 		return new CoreValidator();
 	}
-
+	@Bean
+	public AdminAddStateValidator adminAddStateValidator() {
+		return new AdminAddStateValidator();
+	}
+	@Bean
+	public AddLokSabhaConstituencyValidator AddLokSabhaConstituencyValidator() {
+		return new AddLokSabhaConstituencyValidator();
+	}
 	@Bean
 	public MessageSource messageSource() {
 		ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();

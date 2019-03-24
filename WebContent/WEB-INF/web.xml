@@ -9,7 +9,7 @@
 	<load-on-startup>1</load-on-startup>
 	<multipart-config>
 		<location>C://Users//Leo//git//Vote//tmp//fileUploads</location>
-		<max-file-size>2097152</max-file-size>
+		<max-file-size>4194304</max-file-size>
 		<max-request-size>4194304</max-request-size>
 	</multipart-config>
 </servlet>

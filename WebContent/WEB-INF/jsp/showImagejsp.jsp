@@ -13,7 +13,6 @@ div {resize:both; overflow:auto;border-color:orange;border-style:solid;border-wi
 <div>
 <img id="flower" src="data:image/jpg;base64,${imgBytes}"/>
 </div>
-
 </body>
 <script>
 

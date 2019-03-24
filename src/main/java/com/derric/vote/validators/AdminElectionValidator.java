@@ -29,8 +29,8 @@ public class AdminElectionValidator implements Validator {
 		if (electionForm.getEndDate() == null) {
 			errors.rejectValue("endDate", "invalid.endDate", "Please input end date");
 		}
-		coreValidator.rejectNotStringMinCharacters(errors, electionForm.getElectionName(), 5, "electionName", "electionName.minNoChars", "No. of characters cannot be lesser than 5.");
-		coreValidator.rejectNotStringMaxCharacters(errors, electionForm.getElectionName(), 70,"electionName", "electionName.maxNoChars", "No. of characters cannot be greater than 70.");
+		coreValidator.rejectNotStringMinCharacters(errors, electionForm.getElectionName().trim(), 5, "electionName", "electionName.minNoChars", "No. of characters cannot be lesser than 5.");
+		coreValidator.rejectNotStringMaxCharacters(errors, electionForm.getElectionName().trim(), 70,"electionName", "electionName.maxNoChars", "No. of characters cannot be greater than 70.");
 		coreValidator.rejectIfCurrentDateIsAfter(errors, electionForm.getEndDate(),"endDate", "invalid.endDate2", "End date cannot be less than today's date");
 		coreValidator.rejectIfSecondDateIsBeforeFirstDate(errors, electionForm.getStartDate(), electionForm.getEndDate(),"endDate","invalid.startDate2","End date cannot be less than start date ");
 	}
