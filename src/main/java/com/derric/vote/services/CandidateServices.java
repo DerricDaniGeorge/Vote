@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.datastax.driver.core.utils.Bytes;
 import com.derric.vote.beans.Candidate;
 import com.derric.vote.beans.CandidateDetail;
+import com.derric.vote.beans.Election;
+import com.derric.vote.beans.ElectionDetail;
 import com.derric.vote.beans.User;
 import com.derric.vote.dao.ICandidateDBService;
 import com.derric.vote.forms.AdminCandidateForm;
@@ -41,8 +43,14 @@ public class CandidateServices {
 		candidate.setDetail(CandidateDetail.SYMBOL, symbolImage);
 		candidate.setDetail(CandidateDetail.PROFILE_PHOTO_LENGTH, profileImage.getSize());
 		candidate.setDetail(CandidateDetail.SYMBOL_IMG_LENGTH, symbolImage.getSize());
+		candidate.setDetail(CandidateDetail.STATE, candidateForm.getState());
+		Election election =new Election();
+		election.setElectionName(candidateForm.getElectionName());
+		election.setDetail(ElectionDetail.ELECTION_ID,candidateForm.getElectionId());
+		election.setDetail(ElectionDetail.START_DATE, candidateForm.getElectionStartDate());
+		election.setDetail(ElectionDetail.END_DATE, candidateForm.getElectionEndDate());
 		try {
-		candidateDBService.insertCandidate(candidate,user);
+		candidateDBService.insertCandidate(candidate,election,user);
 		}catch(IOException ioe) {
 			throw ioe;
 		}

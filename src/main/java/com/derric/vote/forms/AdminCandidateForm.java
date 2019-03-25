@@ -9,6 +9,42 @@ public class AdminCandidateForm {
 	private String party;
 	private String state;
 	private String constituency;
+	private String electionName;
+	private String electionId;
+	private String electionStartDate;
+	private String electionEndDate;
+	public String getElectionId() {
+		return electionId;
+	}
+
+	public void setElectionId(String electionId) {
+		this.electionId = electionId;
+	}
+
+	public String getElectionStartDate() {
+		return electionStartDate;
+	}
+
+	public void setElectionStartDate(String electionStartDate) {
+		this.electionStartDate = electionStartDate;
+	}
+
+	public String getElectionEndDate() {
+		return electionEndDate;
+	}
+
+	public void setElectionEndDate(String electionEndDate) {
+		this.electionEndDate = electionEndDate;
+	}
+
+	public String getElectionName() {
+		return electionName;
+	}
+
+	public void setElectionName(String electionName) {
+		this.electionName = electionName;
+	}
+
 	public String getState() {
 		return state;
 	}

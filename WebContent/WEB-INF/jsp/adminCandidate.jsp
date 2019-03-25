@@ -37,7 +37,19 @@ th,td{border: 2px solid;width:300px;text-align:center;padding: 30px;}
 	</form:select>
 	<br>
 	LokSabha Constituency:<form:select id="constituencyBox" name="constituency" path="constituency">
-	</form:select>
+	</form:select><br>
+	Election:<form:select id="electionName"   onchange="updateFieldsOnSelection()" name="electionName" path="electionName">
+	<c:forEach var="election" items="${elections}">
+		<form:option value="${election.electionName}">${election.electionName} - ${election.electionDetails['YEAR']}</form:option>
+	</c:forEach>
+	</form:select> 
+	<br> Start Date:
+	<input id="startDate" type="date" disabled/>End Date:
+	<input id="endDate" type="date" disabled/>
+	<form:input type="hidden" id="election_id" name="electionId" value="" path="electionId"/>
+	<form:input type="hidden" id="election_startDate" name="electionStartDate" value="" path="electionStartDate"/>
+	<form:input type="hidden" id="election_endDate" name="electionEndDate" value="" path="electionEndDate"/>
+	<br>
 	<input type="submit" id="save_button" value="SAVE"/>
 </form:form>
 <table>
@@ -82,8 +94,33 @@ function clearOptionsInDropdown(id){
 }
 function clickFirstOption(){
 	document.getElementById("stateBox").selectedIndex="0";
+	document.getElementById("electionName").selectedIndex="0";
+	updateFieldsOnSelection();
 	getMappedConstituencies();
 }
+function updateFieldsOnSelection(){
+	var selectBox=document.getElementById("electionName");
+	var selectedValue=selectBox.options[selectBox.selectedIndex].value;
+	var startDate=document.getElementById("startDate");
+	var endDate=document.getElementById("endDate");
+	var electionId=document.getElementById("election_id");
+	var electionStartDate=document.getElementById("election_startDate");
+	var electionEndDate=document.getElementById("election_endDate");
+
+	
+	var elections=JSON.parse(JSON.stringify(${jSonElections}));
+	for(i=0;i<elections.length;i++){
+		if((elections[i].electionName)===selectedValue){
+			electionName.value=elections[i].electionName;
+			startDate.value=elections[i].electionDetails.START_DATE;
+			endDate.value=elections[i].electionDetails.END_DATE;
+			electionId.value=elections[i].electionDetails.ELECTION_ID;
+			electionStartDate.value=elections[i].electionDetails.START_DATE;
+			electionEndDate.value=elections[i].electionDetails.END_DATE;
+			break;
+		}
+	}
+} 
 </script>
 </body>
 </html>

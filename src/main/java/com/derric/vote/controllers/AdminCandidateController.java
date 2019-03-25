@@ -32,6 +32,8 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 
 import com.derric.vote.beans.Candidate;
 import com.derric.vote.beans.CandidateDetail;
+import com.derric.vote.beans.Election;
+import com.derric.vote.beans.ElectionDetail;
 import com.derric.vote.beans.User;
 import com.derric.vote.constants.PageConstants;
 import com.derric.vote.constants.URLConstants;
@@ -40,6 +42,8 @@ import com.derric.vote.services.CandidateServices;
 import com.derric.vote.services.ElectionServices;
 import com.derric.vote.validators.AdminCandidateValidator;
 import com.derric.vote.validators.CoreValidator;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Controller
 @SessionAttributes(value = { "candidateForm" })
@@ -55,13 +59,28 @@ public class AdminCandidateController {
 	public ElectionServices electionServices;
 
 	@RequestMapping(value = "/" + URLConstants.ADMIN_CANDIDATE, method = RequestMethod.GET)
-	public String showAddCandidate(Model model) {
+	public String showAddCandidate(Model model) throws JsonProcessingException {
 		AdminCandidateForm candidateForm = new AdminCandidateForm();
 		List<Candidate> candidates=candidateServices.getAllCandidates();
 		candidates.stream().parallel().forEach(action ->convertToBase64(action));
 		model.addAttribute("candidateForm", candidateForm);
 		model.addAttribute("candidates",candidates);
 		model.addAttribute("states", electionServices.getAllStates());
+		List<Election> elections = electionServices.getElectionsNotStartedAndCurrentlyRunning();
+		elections.stream().parallel().forEach(action -> action.setDetail(ElectionDetail.START_DATE,
+				action.getDetail(ElectionDetail.START_DATE).toString()));
+		elections.stream().parallel().forEach(action -> action.setDetail(ElectionDetail.END_DATE,
+				action.getDetail(ElectionDetail.END_DATE).toString()));
+		model.addAttribute("elections", elections);
+		String jSonString = null;
+		try {
+			ObjectMapper objM = new ObjectMapper();
+			jSonString = objM.writeValueAsString(elections);
+		} catch (JsonProcessingException jpe) {
+			throw jpe;
+		}
+		System.out.println(jSonString);
+		model.addAttribute("jSonElections", jSonString);
 		return PageConstants.ADMIN_CANDIDATE_PAGE;
 	}
 	public void convertToBase64(Candidate candidate) {
@@ -73,10 +92,29 @@ public class AdminCandidateController {
 		candidate.setDetail(CandidateDetail.SYMBOL, symbolEncoded);
 	}
 	@RequestMapping(value = "/" + URLConstants.ADMIN_CANDIDATE, method = RequestMethod.POST)
-	public String submitCandidate(HttpServletRequest request,
+	public String submitCandidate(Model model,HttpServletRequest request,
 			@ModelAttribute("candidateForm") @Validated AdminCandidateForm candidateForm, BindingResult result,Errors errors)
 			throws IOException, ServletException {
 		if (result.hasErrors()) {
+			List<Candidate> candidates=candidateServices.getAllCandidates();
+			candidates.stream().parallel().forEach(action ->convertToBase64(action));
+			model.addAttribute("candidates",candidates);
+			model.addAttribute("states", electionServices.getAllStates());
+			List<Election> elections = electionServices.getElectionsNotStartedAndCurrentlyRunning();
+			elections.stream().parallel().forEach(action -> action.setDetail(ElectionDetail.START_DATE,
+					action.getDetail(ElectionDetail.START_DATE).toString()));
+			elections.stream().parallel().forEach(action -> action.setDetail(ElectionDetail.END_DATE,
+					action.getDetail(ElectionDetail.END_DATE).toString()));
+			model.addAttribute("elections", elections);
+			String jSonString = null;
+			try {
+				ObjectMapper objM = new ObjectMapper();
+				jSonString = objM.writeValueAsString(elections);
+			} catch (JsonProcessingException jpe) {
+				throw jpe;
+			}
+			System.out.println(jSonString);
+			model.addAttribute("jSonElections", jSonString);
 			return PageConstants.ADMIN_CANDIDATE_PAGE;
 		}
 		Part profileImage = request.getPart("profilePhoto");
@@ -123,14 +161,6 @@ public class AdminCandidateController {
 		permittedExtensions.add(".PNG");
 		permittedExtensions.add(".GIF");
 		return permittedExtensions;
-	}
-	
-	
-	@RequestMapping(value = "getImage", method = RequestMethod.GET)
-	public String getImage(Model model) throws IOException {
-	//	String imgString = candidateServices.getImageBytes();
-	//	model.addAttribute("imgBytes", imgString);
-		return "showImagejsp";
 	}
 
 	@InitBinder("candidateForm")

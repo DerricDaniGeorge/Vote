@@ -9,7 +9,7 @@ public class CqlConstants {
 	public static final String GET_ELECTION_CREATION_TIME="SELECT creation_time FROM election_by_startdate WHERE year=? AND start_date=? AND election_id=?";
 	public static final String DELETE_ELECTION_ELECTION_BY_STARTDATE="DELETE FROM election_by_startdate WHERE year=? AND start_date=? AND election_id=?;";
 	public static final String DELETE_ELECTION_ELECTION_BY_ENDDATE="DELETE FROM election_by_enddate WHERE year=? AND end_date=? AND election_id=?;";
-	public static final String ADD_CANDIDATE="INSERT INTO candidate(voters_id,first_name,last_name,party,age,profile_photo,election_symbol_img,profile_photo_length,symbol_img_length,creation_time,last_modified_time,last_modifier_key) VALUES(?,?,?,?,?,?,?,?,?,?,?,?);";
+	public static final String ADD_CANDIDATE="INSERT INTO candidate(voters_id,first_name,last_name,party,age,profile_photo,election_symbol_img,profile_photo_length,symbol_img_length,creation_time,last_modified_time,last_modifier_key,state,constituency,mapping_id,election_name,election_id,election_start_date,election_end_date) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
 	public static final String GET_ALL_CANDIDATE_DETAILS="SELECT voters_id,first_name,last_name,party,age,profile_photo,election_symbol_img FROM candidate";
 	public static final String GET_ALL_STATES="SELECT state FROM state";
 	public static final String ADD_STATE="INSERT INTO state(state,creation_time,last_modifier_key,last_modified_time) VALUES(?,?,?,?);";
