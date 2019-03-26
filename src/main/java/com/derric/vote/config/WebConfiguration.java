@@ -24,14 +24,15 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
 import com.derric.vote.formatter.StringToLocalDateFormatter;
-import com.derric.vote.forms.AdminAddStateForm;
+import com.derric.vote.forms.AdminStateForm;
 import com.derric.vote.utils.JavaSendMailSMTPServer;
 import com.derric.vote.utils.MailSender;
 import com.derric.vote.utils.OTPExpirer;
 import com.derric.vote.utils.OTPGenerator;
 import com.derric.vote.utils.StringUtils;
-import com.derric.vote.validators.AddLokSabhaConstituencyValidator;
-import com.derric.vote.validators.AdminAddStateValidator;
+import com.derric.vote.validators.AdminLokSabhaConstituencyValidator;
+import com.derric.vote.validators.AdminPartyValidator;
+import com.derric.vote.validators.AdminStateValidator;
 import com.derric.vote.validators.AdminCandidateValidator;
 import com.derric.vote.validators.AdminElectionValidator;
 import com.derric.vote.validators.CoreValidator;
@@ -90,12 +91,16 @@ public class WebConfiguration implements WebMvcConfigurer{
 		return new CoreValidator();
 	}
 	@Bean
-	public AdminAddStateValidator adminAddStateValidator() {
-		return new AdminAddStateValidator();
+	public AdminStateValidator adminAddStateValidator() {
+		return new AdminStateValidator();
 	}
 	@Bean
-	public AddLokSabhaConstituencyValidator AddLokSabhaConstituencyValidator() {
-		return new AddLokSabhaConstituencyValidator();
+	public AdminPartyValidator adminPartyValidator() {
+		return new AdminPartyValidator();
+	}
+	@Bean
+	public AdminLokSabhaConstituencyValidator AddLokSabhaConstituencyValidator() {
+		return new AdminLokSabhaConstituencyValidator();
 	}
 	@Bean
 	public MessageSource messageSource() {

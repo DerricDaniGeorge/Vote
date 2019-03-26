@@ -44,6 +44,7 @@ public class CandidateServices {
 		candidate.setDetail(CandidateDetail.PROFILE_PHOTO_LENGTH, profileImage.getSize());
 		candidate.setDetail(CandidateDetail.SYMBOL_IMG_LENGTH, symbolImage.getSize());
 		candidate.setDetail(CandidateDetail.STATE, candidateForm.getState());
+		candidate.setDetail(CandidateDetail.CONSTITUENCY, candidateForm.getConstituency());
 		Election election =new Election();
 		election.setElectionName(candidateForm.getElectionName());
 		election.setDetail(ElectionDetail.ELECTION_ID,candidateForm.getElectionId());

@@ -5,20 +5,20 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
-import com.derric.vote.forms.AdminAddStateForm;
+import com.derric.vote.forms.AdminStateForm;
 
-public class AdminAddStateValidator implements Validator{
+public class AdminStateValidator implements Validator{
 	@Autowired
 	CoreValidator coreValidator;
 
 	@Override
 	public boolean supports(Class<?> clazz) {
-		return AdminAddStateForm.class.isAssignableFrom(clazz);
+		return AdminStateForm.class.isAssignableFrom(clazz);
 	}
 
 	@Override
 	public void validate(Object target, Errors errors) {
-		AdminAddStateForm addStateForm=(AdminAddStateForm)target;
+		AdminStateForm addStateForm=(AdminStateForm)target;
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "state", "required.state", "State name required");
 		coreValidator.rejectNotStringContainsOnlyAlphabetsIgnoreSpace(errors, addStateForm.getState().trim(), "state", "state.othercharacters", "State must contains only letters");
 	}

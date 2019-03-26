@@ -6,9 +6,9 @@ import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
 import com.derric.vote.forms.AddLokSabhaConstituencyForm;
-import com.derric.vote.forms.AdminAddStateForm;
+import com.derric.vote.forms.AdminStateForm;
 
-public class AddLokSabhaConstituencyValidator implements Validator {
+public class AdminLokSabhaConstituencyValidator implements Validator {
 	@Autowired
 	CoreValidator coreValidator;
 

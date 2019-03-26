@@ -19,6 +19,7 @@ import com.datastax.driver.core.exceptions.NoHostAvailableException;
 import com.derric.vote.beans.Constituency;
 import com.derric.vote.beans.Election;
 import com.derric.vote.beans.ElectionDetail;
+import com.derric.vote.beans.Party;
 import com.derric.vote.beans.State;
 import com.derric.vote.beans.User;
 import com.derric.vote.beans.VoteConstants;
@@ -318,6 +319,48 @@ public class ElectionDBServiceCassandra implements IElectionDBService {
 			throw e;
 		}
 		return consituencySet;
+	}
+	@Override
+	public List<String> getAllPartyNames() {
+		List<String> partyNames=new ArrayList<>();
+		try {
+			ResultSet result=session.execute(CqlConstants.GET_ALL_PARTIES);
+			for(Row row:result) {
+				partyNames.add(row.getString("party"));
+			}
+		}catch(NoHostAvailableException nhae) {
+			throw nhae;
+		}catch(Exception e) {
+			throw e;
+		}
+		return partyNames;
+	}
+	@Override
+	public void insertParty(Party party, User user) {
+		try {
+			ZonedDateTime timeNow=ZonedDateTime.now(ZoneId.of("Asia/Calcutta"));
+			Date dateForCassandra=Date.from(timeNow.toInstant());
+			PreparedStatement ps=session.prepare(CqlConstants.ADD_PARTY);
+			BoundStatement bs=ps.bind(party.getPartyName(),dateForCassandra,user.getVotersId(),dateForCassandra);
+			session.execute(bs);
+		}catch(NoHostAvailableException nhae) {
+			throw nhae;
+		}catch(Exception e) {
+			throw e;
+		}
+		
+	}
+	@Override
+	public void deleteParty(Party party) {
+		try {
+			PreparedStatement ps=session.prepare(CqlConstants.DELETE_PARTY);
+			BoundStatement bs=ps.bind(party.getPartyName());
+			session.execute(bs);
+		}catch(NoHostAvailableException nhae) {
+			throw nhae;
+		}catch(Exception e) {
+			throw e;
+		}
 	}
 }
 

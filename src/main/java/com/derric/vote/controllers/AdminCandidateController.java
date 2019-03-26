@@ -66,6 +66,7 @@ public class AdminCandidateController {
 		model.addAttribute("candidateForm", candidateForm);
 		model.addAttribute("candidates",candidates);
 		model.addAttribute("states", electionServices.getAllStates());
+		model.addAttribute("parties", electionServices.getAllParties());
 		List<Election> elections = electionServices.getElectionsNotStartedAndCurrentlyRunning();
 		elections.stream().parallel().forEach(action -> action.setDetail(ElectionDetail.START_DATE,
 				action.getDetail(ElectionDetail.START_DATE).toString()));
@@ -100,6 +101,7 @@ public class AdminCandidateController {
 			candidates.stream().parallel().forEach(action ->convertToBase64(action));
 			model.addAttribute("candidates",candidates);
 			model.addAttribute("states", electionServices.getAllStates());
+			model.addAttribute("parties",electionServices.getAllParties());
 			List<Election> elections = electionServices.getElectionsNotStartedAndCurrentlyRunning();
 			elections.stream().parallel().forEach(action -> action.setDetail(ElectionDetail.START_DATE,
 					action.getDetail(ElectionDetail.START_DATE).toString()));

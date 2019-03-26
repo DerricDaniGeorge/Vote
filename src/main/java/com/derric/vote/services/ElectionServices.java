@@ -12,13 +12,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.derric.vote.beans.Constituency;
 import com.derric.vote.beans.Election;
 import com.derric.vote.beans.ElectionDetail;
+import com.derric.vote.beans.Party;
 import com.derric.vote.beans.State;
 import com.derric.vote.beans.User;
 import com.derric.vote.beans.VoteConstants;
 import com.derric.vote.dao.IElectionDBService;
 import com.derric.vote.forms.AddLokSabhaConstituencyForm;
-import com.derric.vote.forms.AdminAddStateForm;
+import com.derric.vote.forms.AdminStateForm;
 import com.derric.vote.forms.AdminElectionForm;
+import com.derric.vote.forms.AdminPartyForm;
 
 /**
  * @author Leo
@@ -93,12 +95,12 @@ public class ElectionServices {
 	public List<String> getAllStates(){
 		return electionDBService.getAllStateNames();
 	}
-	public boolean addState(AdminAddStateForm addStateForm,User user) {
+	public boolean addState(AdminStateForm stateForm,User user) {
 		boolean isStateAdded=true;
 		State state=new State();
-		state.setStateName(addStateForm.getState().trim());
-		for(String stateName:getAllStates()) {
-			if(stateName.equalsIgnoreCase(addStateForm.getState().trim())) {
+		state.setStateName(stateForm.getState().trim());
+		for(String stateName:getAllParties()) {
+			if(stateName.equalsIgnoreCase(stateForm.getState().trim())) {
 				isStateAdded=false;
 				break;
 			}
@@ -126,9 +128,9 @@ public class ElectionServices {
 		}
 		return isConstituencyAdded;
 	}
-	public void deleteState(AdminAddStateForm addStateForm) {
+	public void deleteState(AdminStateForm stateForm) {
 		State state=new State();
-		state.setStateName(addStateForm.getState().trim());
+		state.setStateName(stateForm.getState().trim());
 		electionDBService.deleteState(state);
 	}
 	public void deleteLoksabhaConstituency(AddLokSabhaConstituencyForm constituencyForm) {
@@ -166,6 +168,30 @@ public class ElectionServices {
 			constituencyList.add(constituency);
 		}
 		return constituencyList;
+	}
+	public List<String> getAllParties(){
+		return electionDBService.getAllPartyNames();
+	}
+	
+	public boolean addParty(AdminPartyForm partyForm,User user) {
+		boolean isStateAdded=true;
+		Party party=new Party();
+		party.setPartyName(partyForm.getParty().trim());
+		for(String partyName:getAllParties()) {
+			if(partyName.equalsIgnoreCase(partyForm.getParty().trim())) {
+				isStateAdded=false;
+				break;
+			}
+		}
+		if(isStateAdded) {
+		electionDBService.insertParty(party, user);
+		}
+		return isStateAdded;
+	}
+	public void deleteParty(AdminPartyForm partyForm) {
+		Party state=new Party();
+		state.setPartyName(partyForm.getParty().trim());
+		electionDBService.deleteParty(state);
 	}
 
 }

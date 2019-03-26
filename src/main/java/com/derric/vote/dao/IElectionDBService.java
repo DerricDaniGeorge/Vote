@@ -6,6 +6,7 @@ import java.util.Set;
 
 import com.derric.vote.beans.Constituency;
 import com.derric.vote.beans.Election;
+import com.derric.vote.beans.Party;
 import com.derric.vote.beans.State;
 import com.derric.vote.beans.User;
 
@@ -26,4 +27,7 @@ public interface IElectionDBService {
 	public void insertNewLoksabhaStateMapping(State state, List<Constituency> constituencyList, User user);
 	public String getStateOfLokSabhaMapping(State state);
 	public Set<String> getStateMappedConstituencies(State state);
+	public void insertParty(Party party, User user);
+	public void deleteParty(Party party);
+	public List<String> getAllPartyNames();
 }

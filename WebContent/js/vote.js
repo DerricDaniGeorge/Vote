@@ -274,4 +274,34 @@ function getAllValuesFromList(){
 		return false;
 	}
 }
+function addParty(){
+	allInOne({actionToDo:"ADD"},["party"],["delete_button"],[],["save_button"]);
+}
+function cancelPartyAdding(){
+		clearErrors();
+		allInOne({actionToDo:"",party:""},["delete_button"],["party"],["save_button"],["delete_button"]);
+}
+function deleteParty(){
+	if(getValue("party")==""){
+		alert("No party selected");
+	}else{
+		allInOne({actionToDo:"DELETE"},[],["add_button"],[],["save_button"]);
+		alert("You are going to delete the party. Click on Save button to proceed deleting");
+	
+	}
+}
+function cancelPartyDeleting(){
+	clearErrors();
+	allInOne({actionToDo:""},["add_button"],[],["save_button"],["add_button"]);
+}
+function doRequiredThingsParty(){
+	if(getValue("actionToDo")=="DELETE"){
+		var confirmation= confirm("This action will permanantly delete this party and cannot be undone. Do you want to continue ?");
+		if(confirmation==true){
+			enableById("party");
+			return true;
+		}
+	}
+}
+
 

@@ -23,7 +23,7 @@ import com.derric.vote.beans.ElectionDetail;
 import com.derric.vote.beans.User;
 import com.derric.vote.constants.PageConstants;
 import com.derric.vote.constants.URLConstants;
-import com.derric.vote.forms.AdminAddStateForm;
+import com.derric.vote.forms.AdminStateForm;
 import com.derric.vote.forms.AdminElectionForm;
 import com.derric.vote.forms.RegisterUserForm;
 import com.derric.vote.services.ElectionServices;

@@ -21,5 +21,8 @@ public class CqlConstants {
 	public static final String GET_STATE_LOK_SABHA_MAPPING="SELECT state FROM state_loksabha_constituencies WHERE state=?;";
 	public static final String UPDATE_STATE_LOK_SABHA_MAPPING="UPDATE state_loksabha_constituencies SET last_modified_time=?,last_modifier_key=?,loksabha_constituencies=? WHERE state=?";
 	public static final String GET_MAPPED_CONSTITUENCIES_STATE="SELECT loksabha_constituencies FROM state_loksabha_constituencies WHERE state=?;";
+	public static final String ADD_PARTY="INSERT INTO party(party,creation_time,last_modifier_key,last_modified_time) VALUES(?,?,?,?);";
+	public static final String DELETE_PARTY="DELETE FROM party WHERE party=?;";
+	public static final String GET_ALL_PARTIES="SELECT party FROM party";
 	
 }

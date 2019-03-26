@@ -10,8 +10,9 @@ public class URLConstants {
 	public static final String LOGIN="login";
 	public static final String ADMIN_ELECTION="adminElection";
 	public static final String ADMIN_CANDIDATE="adminCandidate";
-	public static final String ADD_STATE="addState";
-	public static final String ADD_LOKSABHA_CONSTITUENCY="addLokConstituency";
-	public static final String MAP_LOKSABHA_CONSTITUENCY="mapLokConstituency";
+	public static final String ADMIN_STATE="adminState";
+	public static final String ADMIN_LOKSABHA_CONSTITUENCY="adminConstituency";
+	public static final String ADMIN_MAP_LOKSABHA_CONSTITUENCY="adminMapLokConstituency";
 	public static final String GET_MAPPED_LOKSABHA_CONSTITUENCY="getMappedLokConstituency";
+	public static final String ADMIN_PARTY="adminParty";
 }

@@ -21,14 +21,17 @@ th,td{border: 2px solid;width:300px;text-align:center;padding: 30px;}
 	First Name:
 	<form:input id="firstName"  size="40" path="firstName" value=""/><form:errors path="firstName" cssClass="errorText"/>
 	<br> Last Name:<form:input id="lastName"  path="lastName" /><form:errors path="lastName" cssClass="errorText"/> Party:
-	<form:input id="party"     path="party" /><form:errors path="party" cssClass="errorText"/>
+	<form:select path="party" id="partyBox"  name="party" >
+	<c:forEach var="party" items="${parties}">
+		<form:option value="${party}">${party}</form:option>
+	</c:forEach>
+	</form:select>
 	<br>
 	Age:	<form:input id="age"  type="number"   path="age" min="18" max="150" value="18" onkeydown="return false" /><form:errors path="age" cssClass="errorText"/><br>
 	
 	Upload Profile Image:<form:input id="profile_img" name="profilePhoto" type="file" accept="image/jpeg,image/png,image/gif" path="profilePhoto"/><form:errors path="profilePhoto" cssClass="errorText"/><br>
-	<input id="upload_profile_img" type="button" value="Upload" /><br>
 	Upload Symbol:<form:input id="symbol"  type="file" name="symbol" accept="image/jpeg,image/png,image/gif" path="symbol"/><form:errors path="symbol" cssClass="errorText"/><br>
-	<input id="upload_symbol_img" type="button" value="Upload"/><br>
+
 	States:
 	<form:select path="state" id="stateBox"  name="state" onchange="getMappedConstituencies()">
 	<c:forEach var="state" items="${states}">

@@ -25,35 +25,35 @@ import com.derric.vote.beans.Constituency;
 import com.derric.vote.constants.PageConstants;
 import com.derric.vote.constants.URLConstants;
 import com.derric.vote.forms.AddLokSabhaConstituencyForm;
-import com.derric.vote.forms.AdminAddStateForm;
+import com.derric.vote.forms.AdminStateForm;
 import com.derric.vote.services.ElectionServices;
-import com.derric.vote.validators.AddLokSabhaConstituencyValidator;
+import com.derric.vote.validators.AdminLokSabhaConstituencyValidator;
 
 @Controller
 @SessionAttributes(value = { "addLokSabhaConstituencyForm" })
 
 public class AdminLokSabhaConstituencyController {
 	@Autowired
-	private AddLokSabhaConstituencyValidator constituencyVaidator;
+	private AdminLokSabhaConstituencyValidator constituencyVaidator;
 	@Autowired
 	public ElectionServices electionServices;
 
-	@RequestMapping(value = "/" + URLConstants.ADD_LOKSABHA_CONSTITUENCY, method = RequestMethod.GET)
+	@RequestMapping(value = "/" + URLConstants.ADMIN_LOKSABHA_CONSTITUENCY, method = RequestMethod.GET)
 	public String showAddLokSabhaConstituencyPage(Model model) {
 		AddLokSabhaConstituencyForm addLokSabhaConstituencyForm = new AddLokSabhaConstituencyForm();
 		model.addAttribute("addLokSabhaConstituencyForm", addLokSabhaConstituencyForm);
 		model.addAttribute("constituencies", electionServices.getAllLokSabhaConstituenciesName());
-		return PageConstants.ADMIN_ADD_LOKSABHA_CONSTITUENCY_PAGE;
+		return PageConstants.ADMIN_LOKSABHA_CONSTITUENCY_PAGE;
 	}
 
-	@RequestMapping(value = "/" + URLConstants.ADD_LOKSABHA_CONSTITUENCY, method = RequestMethod.POST)
+	@RequestMapping(value = "/" + URLConstants.ADMIN_LOKSABHA_CONSTITUENCY, method = RequestMethod.POST)
 	public String submitAddLokSabhaConstituency(Model model, @RequestParam("action") String action,
 			RedirectAttributes redirectAttributes, HttpServletRequest request,
 			@ModelAttribute("addLokSabhaConstituencyForm") @Validated AddLokSabhaConstituencyForm addLokSabhaConstituencyForm,
 			BindingResult result) {
 		if (result.hasErrors()) {
 			model.addAttribute("constituencies", electionServices.getAllLokSabhaConstituenciesName());
-			return PageConstants.ADMIN_ADD_LOKSABHA_CONSTITUENCY_PAGE;
+			return PageConstants.ADMIN_LOKSABHA_CONSTITUENCY_PAGE;
 		}
 		if (action.equals("ADD")) {
 			if (electionServices.addLoksabhaConstituency(addLokSabhaConstituencyForm,
@@ -67,15 +67,15 @@ public class AdminLokSabhaConstituencyController {
 			electionServices.deleteLoksabhaConstituency(addLokSabhaConstituencyForm);
 				redirectAttributes.addFlashAttribute("constituencyStatus", "Constituency successfully deleted");	
 		}
-		return "redirect:/" + URLConstants.ADD_LOKSABHA_CONSTITUENCY;
+		return "redirect:/" + URLConstants.ADMIN_LOKSABHA_CONSTITUENCY;
 	}
-	@RequestMapping(value = "/" + URLConstants.MAP_LOKSABHA_CONSTITUENCY, method = RequestMethod.GET)
+	@RequestMapping(value = "/" + URLConstants.ADMIN_MAP_LOKSABHA_CONSTITUENCY, method = RequestMethod.GET)
 	public String showMapLokSabhaConstituencyPage(Model model) {
 		model.addAttribute("states", electionServices.getAllStates());
 		model.addAttribute("constituencies", electionServices.getAllLokSabhaConstituenciesName());
 		return PageConstants.MAP_LOKSABHA_CONSTITUENCY_PAGE;
 	}
-	@RequestMapping(value = "/" + URLConstants.MAP_LOKSABHA_CONSTITUENCY, method = RequestMethod.POST)
+	@RequestMapping(value = "/" + URLConstants.ADMIN_MAP_LOKSABHA_CONSTITUENCY, method = RequestMethod.POST)
 	public String submitMapLokSabhaConstituencyPage(HttpServletRequest request,
 			@RequestParam("selected_constituencies") String constituencies,
 			@RequestParam("state") String stateName,RedirectAttributes redirectAttributes) {
@@ -83,7 +83,7 @@ public class AdminLokSabhaConstituencyController {
 		state.setStateName(stateName);
 		electionServices.mapLoksabhaConstituencies(state,constituencies,(User)request.getSession().getAttribute("user"));
 		redirectAttributes.addFlashAttribute("status", "Mapping successfully saved");	
-		return "redirect:/" + URLConstants.MAP_LOKSABHA_CONSTITUENCY;
+		return "redirect:/" + URLConstants.ADMIN_MAP_LOKSABHA_CONSTITUENCY;
 	}
 	@RequestMapping(value = "/"+URLConstants.GET_MAPPED_LOKSABHA_CONSTITUENCY, method = RequestMethod.GET)
 	@ResponseBody

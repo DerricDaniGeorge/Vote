@@ -3,6 +3,7 @@ package com.derric.vote.dao;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -52,6 +53,11 @@ public class CandidateDBServiceCassandra implements ICandidateDBService {
 			is2.close();
 			ZonedDateTime timeNow = ZonedDateTime.now(ZoneId.of("Asia/Calcutta"));
 			Date dateForCassandra = Date.from(timeNow.toInstant());
+			UUID uuid=UUID.randomUUID();
+			LocalDate startDate=(LocalDate) election.getDetail(ElectionDetail.START_DATE);
+			com.datastax.driver.core.LocalDate cassandraStartDate=com.datastax.driver.core.LocalDate.fromYearMonthDay(startDate.getYear(), startDate.getMonthValue(), startDate.getDayOfMonth());
+			LocalDate endDate=(LocalDate) election.getDetail(ElectionDetail.END_DATE);
+			com.datastax.driver.core.LocalDate cassandraEndDate=com.datastax.driver.core.LocalDate.fromYearMonthDay(endDate.getYear(), endDate.getMonthValue(), endDate.getDayOfMonth());
 			PreparedStatement ps = session.prepare(CqlConstants.ADD_CANDIDATE);
 			BoundStatement bs = ps.bind(candidate.getVotersId(), candidate.getDetail(CandidateDetail.FIRST_NAME),
 					candidate.getDetail(CandidateDetail.LAST_NAME), candidate.getDetail(CandidateDetail.PARTY),
@@ -59,8 +65,8 @@ public class CandidateDBServiceCassandra implements ICandidateDBService {
 					candidate.getDetail(CandidateDetail.PROFILE_PHOTO_LENGTH),
 					candidate.getDetail(CandidateDetail.SYMBOL_IMG_LENGTH), dateForCassandra, dateForCassandra,
 					user.getVotersId(), candidate.getDetail(CandidateDetail.STATE),
-					candidate.getDetail(CandidateDetail.CONSTITUENCY),UUID.randomUUID(),election.getElectionName(),election.getDetail(ElectionDetail.ELECTION_ID),
-					election.getDetail(ElectionDetail.START_DATE),election.getDetail(ElectionDetail.END_DATE));
+					candidate.getDetail(CandidateDetail.CONSTITUENCY),uuid,election.getElectionName(),UUID.fromString(election.getDetail(ElectionDetail.ELECTION_ID).toString()),
+					cassandraStartDate,cassandraEndDate);
 			session.execute(bs);
 
 		} catch (NoHostAvailableException nhae) {

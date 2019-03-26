@@ -19,53 +19,53 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.derric.vote.beans.User;
 import com.derric.vote.constants.PageConstants;
 import com.derric.vote.constants.URLConstants;
-import com.derric.vote.forms.AdminStateForm;
+import com.derric.vote.forms.AdminPartyForm;
 import com.derric.vote.services.ElectionServices;
+import com.derric.vote.validators.AdminPartyValidator;
 import com.derric.vote.validators.AdminStateValidator;
 
 @Controller
-@SessionAttributes(value = { "stateForm" })
-public class AdminStateController {
-
+@SessionAttributes(value = { "partyForm" })
+public class AdminPartyController {
 	@Autowired
-	public AdminStateValidator stateFormValidator;
+	public AdminPartyValidator partyFormValidator;
 	@Autowired
 	public ElectionServices electionServices;
 
-	@RequestMapping(value = "/" + URLConstants.ADMIN_STATE, method = RequestMethod.GET)
-	public String showAddStatePage(Model model) {
-		AdminStateForm stateForm = new AdminStateForm();
-		model.addAttribute("stateForm", stateForm);
-		model.addAttribute("states", electionServices.getAllStates());
-		return PageConstants.ADMIN_STATE_PAGE;
+	@RequestMapping(value = "/" + URLConstants.ADMIN_PARTY, method = RequestMethod.GET)
+	public String showAddPartyPage(Model model) {
+		AdminPartyForm partyForm = new AdminPartyForm();
+		model.addAttribute("partyForm", partyForm);
+		model.addAttribute("parties", electionServices.getAllParties());
+		return PageConstants.ADMIN_PARTY_PAGE;
 	}
 
-	@RequestMapping(value = "/" + URLConstants.ADMIN_STATE, method = RequestMethod.POST)
+	@RequestMapping(value = "/" + URLConstants.ADMIN_PARTY, method = RequestMethod.POST)
 	public String submitAddCandidate(Model model, RedirectAttributes redirectAttributes, HttpServletRequest request,
 			@RequestParam("action") String action,
-			@ModelAttribute("stateForm") @Validated AdminStateForm stateForm, BindingResult result) {
+			@ModelAttribute("addPartyForm") @Validated AdminPartyForm partyForm, BindingResult result) {
 		if (result.hasErrors()) {
 			model.addAttribute("hasErrors", "true");
-			model.addAttribute("states", electionServices.getAllStates());
-			return PageConstants.ADMIN_STATE_PAGE;
+			model.addAttribute("parties", electionServices.getAllParties());
+			return PageConstants.ADMIN_PARTY_PAGE;
 		}
 		if(action.equals("ADD")) {
-			if (electionServices.addState(stateForm, (User) request.getSession().getAttribute("user"))) {
-				redirectAttributes.addFlashAttribute("stateStatus", "State successfully added");
+			if (electionServices.addParty(partyForm, (User) request.getSession().getAttribute("user"))) {
+				redirectAttributes.addFlashAttribute("partyStatus", "Party successfully added");
 			} else {
-				redirectAttributes.addFlashAttribute("stateStatus", "State with same name already exists");
+				redirectAttributes.addFlashAttribute("partyStatus", "Party with same name already exists");
 			}
 		}
 		if(action.equals("DELETE")) {
-			electionServices.deleteState(stateForm); 
-				redirectAttributes.addFlashAttribute("stateStatus", "State successfully deleted");	
+			electionServices.deleteParty(partyForm); 
+				redirectAttributes.addFlashAttribute("partyStatus", "Party successfully deleted");	
 		}
-		return "redirect:/" + URLConstants.ADMIN_STATE;
+		return "redirect:/" + URLConstants.ADMIN_PARTY;
 	}
 
-	@InitBinder("stateForm")
+	@InitBinder("addPartyForm")
 	public void initBinder(WebDataBinder binder) {
-		binder.setValidator(stateFormValidator);
+		binder.setValidator(partyFormValidator);
 	}
 
 }

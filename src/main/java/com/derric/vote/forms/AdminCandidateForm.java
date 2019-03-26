@@ -1,5 +1,7 @@
 package com.derric.vote.forms;
 
+import java.time.LocalDate;
+
 import javax.servlet.http.Part;
 
 public class AdminCandidateForm {
@@ -11,8 +13,8 @@ public class AdminCandidateForm {
 	private String constituency;
 	private String electionName;
 	private String electionId;
-	private String electionStartDate;
-	private String electionEndDate;
+	private LocalDate electionStartDate;
+	private LocalDate electionEndDate;
 	public String getElectionId() {
 		return electionId;
 	}
@@ -21,19 +23,19 @@ public class AdminCandidateForm {
 		this.electionId = electionId;
 	}
 
-	public String getElectionStartDate() {
+	public LocalDate getElectionStartDate() {
 		return electionStartDate;
 	}
 
-	public void setElectionStartDate(String electionStartDate) {
+	public void setElectionStartDate(LocalDate electionStartDate) {
 		this.electionStartDate = electionStartDate;
 	}
 
-	public String getElectionEndDate() {
+	public LocalDate getElectionEndDate() {
 		return electionEndDate;
 	}
 
-	public void setElectionEndDate(String electionEndDate) {
+	public void setElectionEndDate(LocalDate electionEndDate) {
 		this.electionEndDate = electionEndDate;
 	}
 

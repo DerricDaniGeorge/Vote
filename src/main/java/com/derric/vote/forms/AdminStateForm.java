@@ -1,6 +1,6 @@
 package com.derric.vote.forms;
 
-public class AdminAddStateForm {
+public class AdminStateForm {
 	String state;
 
 	public String getState() {
